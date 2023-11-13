@@ -4,4 +4,6 @@ project(2048enC C)
 set(CMAKE_C_STANDARD 11)
 
 add_executable(2048enC
-        main.c)
+        main.c
+        cmake-build-debug/fonctions.h
+        cmake-build-debug/fonctions.cpp)
