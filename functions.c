@@ -13,7 +13,7 @@ int compare(int value1, int value2){
       return 0;
 }
 
-void add_case(int Tab[][], int length){
+void add_case(int Tab[][], int length, int *score){
 
   int x = (rand()%length);
   int y = (rend()%length);
@@ -23,41 +23,9 @@ void add_case(int Tab[][], int length){
     y = (rand()%length);
   }
   Tab[y][x] = 2;
+  *score += 2;
 }
 
 
 
-int modifiy_value_position(int Tab[4][4], char sensRotation){
-  //On prendra l pour de gauche à droite
-  //r pour de droit à gauche
-  //d pour de haut en bas
-  //u pour de bas en haut
-  int retenue;
-  switch(sensRotation){
-
-    case 'l':
-      for (int i = Tab.length-1; i > 1; i--){
-        for (int y = Tab[0].length-1; y > 1; y++){
-          retenue = 1;
-          while (Tab[i][y-retenue] == 0 || y - retenue >= 0){
-            retenue += 1;
-          } 
-          if (compare(Tab[i][y], Tab[i][y-retenue]){
-            Tab[i][y] = Tab[i][y] * Tab[i][y-retenue];
-            Tab[i][y-retenue] = null;
-          } else if (compare(Tab[i][y], Tab[i][y-retenue])){
-            Tab[i][y-1] = Tab[i][y-retenue];
-            Tab[i][y-retenue] = null;
-        }
-      }
-      break;
-    case 'r':
-      break;
-    case 'd':
-      break;
-    case 'u':
-      break;
-
-  }
-  
 }
