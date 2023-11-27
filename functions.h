@@ -2,11 +2,10 @@
 #define FUNCTIONS_H
 
 int compare(int, int);
-
-int add_case(int, int);
-void modify_score(int, int);
-
-int Fusion(int, int, char);
+void fusion(int n, int Tab[n][n], char sensRotation);
+void affiche(int n, int T[n][n]);
+void move(int n, int T[n][n],char sens);
+void add_case(int length,int Tab[length][length], int *score);
 
 
 
