@@ -7,13 +7,12 @@
 void affiche(int n, int T[n][n]){
     for (int i =0; i<n; i++ ){
         for (int y =0; y<n; y++ ) {
-            printf("  %d  ", T[i][y]);
+            printf("%-7d", T[i][y]);
         }
         printf("\n");
     }
 }
 int compare(int value1, int value2){
-  // Il est important de noter que la variable value 2 doit nécesserement être la case qui serait utiliser pour fusionner avec une case principale.
   if (value1 == value2){
       return 1;
   }
@@ -78,13 +77,14 @@ void fusion(int n, int Tab[n][n], char sensRotation){
       break;
     case 'u':
         printf("deplacement de bas en haut\n");
-        for (int y=0; y < n; y++){
+        int y;
+        for ( y=0; y < n; y++){
             for (int x = 0; x < n; x++){
                 for(int j=x+1;j<n;j++){
                 if (compare(Tab[x][y], Tab[j][y])){
-                    Tab[x][y] = Tab[j][y]*2;
+                    Tab[x][y] = 2*Tab[x][y];
                     Tab[j][y] = 0;
-                    j=n+1;
+                    j=n;
                 }
                 else if (Tab[j][y]!=0){
                     j=n;
@@ -98,7 +98,7 @@ void fusion(int n, int Tab[n][n], char sensRotation){
             for (int x = n-1; x >=0; x--){
                 for (int j=x-1;j>=0;j--){
                     if (compare(Tab[x][y], Tab[j][y])){
-                        Tab[x][y] = Tab[j][y]*2;
+                        Tab[x][y] += Tab[j][y];
                         Tab[j][y] = 0;
                         j=-1;
                     }
@@ -116,10 +116,10 @@ void move(int n, int T[n][n],char sens){
     int caseLibre[n][2], traker,index;
     switch (sens) {
         case 'r':
-            for (int x=n-1;x>=0;x--){
+            for (int x=0;x<n;x++){
                 traker=0;
                 index=0;
-                for(int y=0;y<n;y++){
+                for(int y=n-1;y>=0;y--){
                     if(T[x][y]==0){
                         caseLibre[traker][0]=x;
                         caseLibre[traker][1]=y;
