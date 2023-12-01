@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-void affiche(int n, int T[n][n]){
+void affiche(int n, int T[n][n],int*Score){
+    printf("Score Actuel : %d\n",*Score);
     for (int i =0; i<n; i++ ){
         for (int y =0; y<n; y++ ) {
             printf("%-7d", T[i][y]);
@@ -41,10 +42,10 @@ void fusion(int n, int Tab[n][n], char sensRotation){
 
   switch(sensRotation){
 
-    case 'r':
+    case 'd':
         printf("deplacement de gauche a droite\n");
       for (int x = 0; x < n; x++){
-          for (int y = n-2; y >=0; y--){
+          for (int y = n-1; y >=0; y--){
               for(int j=y-1;j>=0;j--){
               if (compare(Tab[x][y], Tab[x][j])){
                   Tab[x][y] = Tab[x][y]*2;
@@ -58,7 +59,7 @@ void fusion(int n, int Tab[n][n], char sensRotation){
       }
 
       break;
-    case 'l':
+    case 'q':
         printf("deplacement de droite a gauche\n");
         for (int x = 0; x < n; x++){
             for (int y = 0; y < n; y++){
@@ -75,24 +76,23 @@ void fusion(int n, int Tab[n][n], char sensRotation){
             }
         }
       break;
-    case 'u':
+    case 'z':
         printf("deplacement de bas en haut\n");
-        int y;
-        for ( y=0; y < n; y++){
-            for (int x = 0; x < n; x++){
-                for(int j=x+1;j<n;j++){
-                if (compare(Tab[x][y], Tab[j][y])){
-                    Tab[x][y] = 2*Tab[x][y];
-                    Tab[j][y] = 0;
-                    j=n;
-                }
-                else if (Tab[j][y]!=0){
-                    j=n;
+        for (int y=0; y < n; y++) {
+            for (int x = 0; x < n; x++) {
+                for (int j = x + 1; j < n; j++) {
+                    if (compare(Tab[x][y], Tab[j][y])) {
+                        Tab[x][y] = 2 * Tab[x][y];
+                        Tab[j][y] = 0;
+                        j = n;
+                    } else if (Tab[j][y] != 0) {
+                        j = n;
+                    }
                 }
             }
         }
       break;
-    default:
+    case 's':
         printf("deplacement de haut en bas\n");
         for (int y = 0; y < n; y++){
             for (int x = n-1; x >=0; x--){
@@ -106,16 +106,17 @@ void fusion(int n, int Tab[n][n], char sensRotation){
                         j=-1;
                 }
             }
-        }
+        }}
       break;
-
+      default:
+          break;
   }
-}}}
+}
 
 void move(int n, int T[n][n],char sens){
     int caseLibre[n][2], traker,index;
     switch (sens) {
-        case 'r':
+        case 'd':
             for (int x=0;x<n;x++){
                 traker=0;
                 index=0;
@@ -137,7 +138,7 @@ void move(int n, int T[n][n],char sens){
                 }
             }
             break;
-        case 'l':
+        case 'q':
 
             for (int x=0;x<n;x++){
                 traker=0;
@@ -160,7 +161,7 @@ void move(int n, int T[n][n],char sens){
                 }
             }
             break;
-        case 'u':
+        case 'z':
             for (int y=0;y<n;y++){
                 traker=0;
                 index=0;
@@ -182,7 +183,7 @@ void move(int n, int T[n][n],char sens){
                 }
             }
             break;
-        case 'd':
+        case 's':
             for (int y=0;y<n;y++){
                 traker=0;
                 index=0;
@@ -204,5 +205,27 @@ void move(int n, int T[n][n],char sens){
                 }
             }
             break;
+        default:
+            break;
+    }
+}
+
+void jeu(int n, int mode,int T[n][n]){
+    int a=1,score=0;
+    char dir;
+    add_case(n,T,&score);
+    affiche(n,T,&score);
+    while (a){
+        printf("dans quel direction voulez vous aller ? (l/r/u/d) ou 'a' pour quitter");
+        scanf("%c",&dir);
+        fflush(stdin);
+        strlwr(&dir);
+        if (dir=='a'){a=0;}
+        else{fusion(4,T,dir);
+        move(4,T,dir);
+        add_case(n,T,&score);
+        affiche(n,T,&score);
+        }
+
     }
 }
