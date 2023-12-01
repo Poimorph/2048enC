@@ -91,6 +91,7 @@ void fusion(int n, int Tab[n][n], char sensRotation){
                 }
             }
         }
+        }
       break;
     default:
         printf("deplacement de haut en bas\n");
@@ -106,6 +107,8 @@ void fusion(int n, int Tab[n][n], char sensRotation){
                         j=-1;
                 }
             }
+        
+        }
         }
       break;
 
@@ -181,6 +184,7 @@ void move(int n, int T[n][n],char sens){
                     }
                 }
             }
+    
             break;
         case 'd':
             for (int y=0;y<n;y++){
