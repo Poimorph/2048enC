@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "2048enC::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-2048enC-Debug-f416c06fc4b1e8212a4b.json",
+					"jsonFile" : "target-2048enC-Debug-281bf05710f5f5428fe8.json",
 					"name" : "2048enC",
 					"projectIndex" : 0
 				}
@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/Users/suhay/Documents/GitHub/2048enC/cmake-build-debug",
-		"source" : "C:/Users/suhay/Documents/GitHub/2048enC"
+		"build" : "C:/Users/suhay/Documents/2048enC/cmake-build-debug",
+		"source" : "C:/Users/suhay/Documents/2048enC"
 	},
 	"version" : 
 	{
