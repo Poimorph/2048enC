@@ -13,3 +13,9 @@ a faire :
   *   annimations des déplacements
   *   annimation de changement des valeurs de cases
   *   
+
+
+Répartition actuel :
+* Partie Graphique : Suhayb
+* Les modes de jeu : Matteo
+* Gestion de la sauvegarde : Alexis
