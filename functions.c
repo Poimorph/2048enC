@@ -3,6 +3,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <ctype.h>
 
 void affiche(int n, int T[n][n],int*Score){
@@ -14,6 +15,21 @@ void affiche(int n, int T[n][n],int*Score){
         printf("\n");
     }
 }
+
+void affiche_duo(int n, int T1[n][n], int T2[n][n], int* score){
+    printf("Score Actuel ! %d\n", *score);
+    for (int i = 0; i < n; i++){
+        for (int y = 0; y < n; y++){
+            printf("%-7d", T1[i][y]);
+        }
+        printf("%-7s", "    ");
+        for (int m = 0; m < n; m++){
+            printf("%-7d", T2[i][m]);
+        }
+        printf("\n");
+    }
+}
+
 int compare(int value1, int value2){
     if (value1 == value2){
         return 1;
@@ -142,7 +158,7 @@ void fusion(int n, int Tab[n][n], char sensRotation){
     switch(sensRotation){
 
         case 'd':
-            printf("deplacement de gauche a droite\n");
+
             for (int x = 0; x < n; x++){
                 for (int y = n-1; y >=0; y--){
                     for(int j=y-1;j>=0;j--){
@@ -159,7 +175,7 @@ void fusion(int n, int Tab[n][n], char sensRotation){
 
             break;
         case 'q':
-            printf("deplacement de droite a gauche\n");
+
             for (int x = 0; x < n; x++){
                 for (int y = 0; y < n; y++){
                     for(int j=y+1;j<n;j++){
@@ -176,7 +192,7 @@ void fusion(int n, int Tab[n][n], char sensRotation){
             }
             break;
         case 'z':
-            printf("deplacement de bas en haut\n");
+
             for (int y=0; y < n; y++) {
                 for (int x = 0; x < n; x++) {
                     for (int j = x + 1; j < n; j++) {
@@ -192,7 +208,7 @@ void fusion(int n, int Tab[n][n], char sensRotation){
             }
             break;
         case 's':
-            printf("deplacement de haut en bas\n");
+
             for (int y = 0; y < n; y++){
                 for (int x = n-1; x >=0; x--){
                     for (int j=x-1;j>=0;j--){
@@ -219,26 +235,118 @@ void creationTab(int n,int T[n][n]){
     }
 }
 
-void jeu(int n, int mode){
-    int a=1,score=0, T[n][n];
+void duo(int n, int T1[n][n], int T2[n][n], int *score){
+    int a = 1;
     char dir;
-    creationTab(n,T);
-    add_case(n,T,&score);
-    affiche(n,T,&score);
-    while (a){
+    creationTab(n, T1);
+    creationTab(n, T2);
+    add_case(n, T1, &score);
+    add_case(n, T2, &score);
+    affiche_duo(n, T1, T2, &score);
+    while (a) {
+        printf("dans quel direction voulez vous aller ? (l/r/u/d) ou 'a' pour quitter\n");
+        scanf("%c", &dir);
+        fflush(stdin);
+
+        if (dir == 'a') { a = 0; }
+        else {
+            fusion(n, T1, dir);
+            fusion(n, T2, dir);
+            move(n, T1, dir);
+            move(n, T2, dir);
+            add_case(n, T1, &score);
+            add_case(n, T2, &score);
+            affiche_duo(n, T1, T2, &score);
+        }
+    }
+}
+
+void normal(int n, int T1[n][n], int *score){
+    int a = 1;
+    char dir;
+    creationTab(n, T1);
+    add_case(n, T1, &score);
+    affiche(n, T1, &score);
+    while (a) {
         printf("dans quel direction voulez vous aller ? (l/r/u/d) ou 'a' pour quitter");
-        scanf("%c",&dir);
+        scanf("%c", &dir);
         fflush(stdin);
         tolower(dir);
-        if (dir=='a'){a=0;}
-        else{fusion(4,T,dir);
-            move(4,T,dir);
-            add_case(n,T,&score);
-            affiche(n,T,&score);
+        if (dir == 'a') { a = 0; }
+        else {
+            fusion(4, T1, dir);
+            move(4, T1, dir);
+            add_case(n, T1, &score);
+            affiche(n, T1, &score);
         }
 
     }
 }
-//
-// Created by suhay on 05/12/2023.
-//
+
+void puzzle(int *score){
+    int a = 1;
+
+    char dir;
+    FILE* f = fopen("./../puzzleStorage/puzzle1.txt", "r");
+    if (f != NULL) {
+        char buffer[256];
+        fgets(buffer, 256, f);
+        strtok(buffer, "|");
+        int n = *strtok(NULL, "|") - '0';
+        int T1[n][n];
+        fgets(buffer, 256, f);
+
+        printf("%d", n);
+        for (int i = 0; i < n; i++) {
+            if (*strtok(buffer, "|") - '0' == -1) {
+                T1[i][0] = -1;
+            } else {
+                T1[i][0] = *strtok(buffer, "|") - '0';
+            }
+            printf("%d", T1[i][0]);
+            printf("%s", strtok(NULL, "|"));
+            for (int y = 1; y < n; y++) {
+                printf("Lol");
+                printf("%c", *strtok(NULL, "|") - '0');
+                if (strtok(NULL, "|") - '0' == -1) {
+
+                    T1[i][y] = -1;
+                } else {
+
+                    printf("%d", *strtok(NULL, "|") - '0');
+                    T1[i][y] = 0;
+                }
+            }
+            fgets(buffer, 256, f);
+        }
+
+
+        fclose(f);
+        affiche(n, T1, &score);
+        while (a) {
+            printf("dans quel direction voulez vous aller ? (l/r/u/d) ou 'a' pour quitter");
+            scanf("%c", &dir);
+            fflush(stdin);
+            tolower(dir);
+            if (dir == 'a') { a = 0; }
+            else {
+                fusion(4, T1, dir);
+                move(4, T1, dir);
+                add_case(n, T1, &score);
+                affiche(n, T1, &score);
+            }
+
+        }
+    }
+}
+
+void jeu(int n, int mode) {
+    int score = 0, T1[n][n], T2[n][n];
+    if (mode == 1) {
+        normal(n, T1, &score);
+    } else if (mode == 2) {
+        duo(n, T1, T2, &score);
+    } else if (mode == 3){
+        puzzle(&score);
+    }
+}
