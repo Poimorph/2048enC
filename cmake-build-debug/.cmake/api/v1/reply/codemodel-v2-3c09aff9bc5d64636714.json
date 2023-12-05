@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/Users/suhay/Documents/2048enC/cmake-build-debug",
-		"source" : "C:/Users/suhay/Documents/2048enC"
+		"build" : "C:/Users/suhay/Documents/GitHub/2048enC/cmake-build-debug",
+		"source" : "C:/Users/suhay/Documents/GitHub/2048enC"
 	},
 	"version" : 
 	{

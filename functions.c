@@ -220,14 +220,11 @@ void creationTab(int n,int T[n][n]){
 }
 
 void jeu(int n, int mode){
-    int a=1,score=0;
-    char dir, T[n][n];
+    int a=1,score=0, T[n][n];
+    char dir;
     creationTab(n,T);
-    printf("1");
-    affiche(n,T,&score);
-    printf("2");
     add_case(n,T,&score);
-    printf("3");
+    affiche(n,T,&score);
     while (a){
         printf("dans quel direction voulez vous aller ? (l/r/u/d) ou 'a' pour quitter");
         scanf("%c",&dir);
