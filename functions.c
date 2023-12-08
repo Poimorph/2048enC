@@ -10,7 +10,12 @@ void affiche(int n, int T[n][n],int*Score){
     printf("Score Actuel : %d\n",*Score);
     for (int i =0; i<n; i++ ){
         for (int y =0; y<n; y++ ) {
-            printf("%-7d", T[i][y]);
+            if (T[i][y] == -1){
+                printf("%-7c", 'X');
+            }else {
+                printf("%-7d", T[i][y]);
+            }
+
         }
         printf("\n");
     }
@@ -59,19 +64,20 @@ void move(int n, int T[n][n],char sens){
                 traker=0;
                 index=0;
                 for(int y=n-1;y>=0;y--){
-                    if(T[x][y]==0){
-                        caseLibre[traker][0]=x;
-                        caseLibre[traker][1]=y;
-                        traker++;
-                    }
-                    else if (traker!=0){
-                        int i=caseLibre[index][0], j=caseLibre[index][1];
-                        T[i][j]=T[x][y];
-                        T[x][y]=0;
-                        caseLibre[traker][0]=x;
-                        caseLibre[traker][1]=y;
-                        traker++;
-                        index++;
+                    if (T[x][y] != -1) {
+                        if (T[x][y] == 0) {
+                            caseLibre[traker][0] = x;
+                            caseLibre[traker][1] = y;
+                            traker++;
+                        } else if (traker != 0) {
+                            int i = caseLibre[index][0], j = caseLibre[index][1];
+                            T[i][j] = T[x][y];
+                            T[x][y] = 0;
+                            caseLibre[traker][0] = x;
+                            caseLibre[traker][1] = y;
+                            traker++;
+                            index++;
+                        }
                     }
                 }
             }
@@ -82,19 +88,20 @@ void move(int n, int T[n][n],char sens){
                 traker=0;
                 index=0;
                 for(int y=0;y<n;y++){
-                    if(T[x][y]==0){
-                        caseLibre[traker][0]=x;
-                        caseLibre[traker][1]=y;
-                        traker++;
-                    }
-                    else if (traker!=0){
-                        int i=caseLibre[index][0], j=caseLibre[index][1];
-                        T[i][j]=T[x][y];
-                        T[x][y]=0;
-                        caseLibre[traker][0]=x;
-                        caseLibre[traker][1]=y;
-                        traker++;
-                        index++;
+                    if (T[x][y] != -1) {
+                        if (T[x][y] == 0) {
+                            caseLibre[traker][0] = x;
+                            caseLibre[traker][1] = y;
+                            traker++;
+                        } else if (traker != 0) {
+                            int i = caseLibre[index][0], j = caseLibre[index][1];
+                            T[i][j] = T[x][y];
+                            T[x][y] = 0;
+                            caseLibre[traker][0] = x;
+                            caseLibre[traker][1] = y;
+                            traker++;
+                            index++;
+                        }
                     }
                 }
             }
@@ -104,19 +111,20 @@ void move(int n, int T[n][n],char sens){
                 traker=0;
                 index=0;
                 for(int x=0;x<n;x++){
-                    if(T[x][y]==0){
-                        caseLibre[traker][0]=x;
-                        caseLibre[traker][1]=y;
-                        traker++;
-                    }
-                    else if (traker!=0){
-                        int i=caseLibre[index][0], j=caseLibre[index][1];
-                        T[i][j]=T[x][y];
-                        T[x][y]=0;
-                        caseLibre[traker][0]=x;
-                        caseLibre[traker][1]=y;
-                        traker++;
-                        index++;
+                    if (T[x][y] != -1) {
+                        if (T[x][y] == 0) {
+                            caseLibre[traker][0] = x;
+                            caseLibre[traker][1] = y;
+                            traker++;
+                        } else if (traker != 0) {
+                            int i = caseLibre[index][0], j = caseLibre[index][1];
+                            T[i][j] = T[x][y];
+                            T[x][y] = 0;
+                            caseLibre[traker][0] = x;
+                            caseLibre[traker][1] = y;
+                            traker++;
+                            index++;
+                        }
                     }
                 }
             }
@@ -127,19 +135,20 @@ void move(int n, int T[n][n],char sens){
                 traker=0;
                 index=0;
                 for(int x=n-1;x>=0;x--){
-                    if(T[x][y]==0){
-                        caseLibre[traker][0]=x;
-                        caseLibre[traker][1]=y;
-                        traker++;
-                    }
-                    else if (traker!=0){
-                        int i=caseLibre[index][0], j=caseLibre[index][1];
-                        T[i][j]=T[x][y];
-                        T[x][y]=0;
-                        caseLibre[traker][0]=x;
-                        caseLibre[traker][1]=y;
-                        traker++;
-                        index++;
+                    if (T[x][y] != -1) {
+                        if (T[x][y] == 0) {
+                            caseLibre[traker][0] = x;
+                            caseLibre[traker][1] = y;
+                            traker++;
+                        } else if (traker != 0) {
+                            int i = caseLibre[index][0], j = caseLibre[index][1];
+                            T[i][j] = T[x][y];
+                            T[x][y] = 0;
+                            caseLibre[traker][0] = x;
+                            caseLibre[traker][1] = y;
+                            traker++;
+                            index++;
+                        }
                     }
                 }
             }
@@ -150,10 +159,10 @@ void move(int n, int T[n][n],char sens){
 }
 
 void fusion(int n, int Tab[n][n], char sensRotation){
-    /*    On prendra r pour de gauche à droite
-          l pour de droit à gauche
-          u pour de haut en bas
-          d pour de bas en haut*/
+    /*    On prendra d pour de gauche à droite
+          q pour de droit à gauche
+          s pour de haut en bas
+          z pour de bas en haut*/
 
     switch(sensRotation){
 
@@ -240,23 +249,23 @@ void duo(int n, int T1[n][n], int T2[n][n], int *score){
     char dir;
     creationTab(n, T1);
     creationTab(n, T2);
-    add_case(n, T1, &score);
-    add_case(n, T2, &score);
-    affiche_duo(n, T1, T2, &score);
+    add_case(n, T1, score);
+    add_case(n, T2, score);
+    affiche_duo(n, T1, T2, score);
     while (a) {
-        printf("dans quel direction voulez vous aller ? (l/r/u/d) ou 'a' pour quitter\n");
+        printf("dans quel direction voulez vous aller ? (q/d/z/s) ou 'a' pour quitter\n");
         scanf("%c", &dir);
         fflush(stdin);
-
+        tolower(dir);
         if (dir == 'a') { a = 0; }
         else {
             fusion(n, T1, dir);
             fusion(n, T2, dir);
             move(n, T1, dir);
             move(n, T2, dir);
-            add_case(n, T1, &score);
-            add_case(n, T2, &score);
-            affiche_duo(n, T1, T2, &score);
+            add_case(n, T1, score);
+            add_case(n, T2, score);
+            affiche_duo(n, T1, T2, score);
         }
     }
 }
@@ -264,9 +273,10 @@ void duo(int n, int T1[n][n], int T2[n][n], int *score){
 void normal(int n, int T1[n][n], int *score){
     int a = 1;
     char dir;
+
     creationTab(n, T1);
-    add_case(n, T1, &score);
-    affiche(n, T1, &score);
+    add_case(n, T1, score);
+    affiche(n, T1, score);
     while (a) {
         printf("dans quel direction voulez vous aller ? (l/r/u/d) ou 'a' pour quitter");
         scanf("%c", &dir);
@@ -274,10 +284,10 @@ void normal(int n, int T1[n][n], int *score){
         tolower(dir);
         if (dir == 'a') { a = 0; }
         else {
-            fusion(4, T1, dir);
-            move(4, T1, dir);
-            add_case(n, T1, &score);
-            affiche(n, T1, &score);
+            fusion(n, T1, dir);
+            move(n, T1, dir);
+            add_case(n, T1, score);
+            affiche(n, T1, score);
         }
 
     }
@@ -294,27 +304,27 @@ void puzzle(int *score){
         strtok(buffer, "|");
         int n = *strtok(NULL, "|") - '0';
         int T1[n][n];
+
+
+
         fgets(buffer, 256, f);
 
-        printf("%d", n);
         for (int i = 0; i < n; i++) {
-            if (*strtok(buffer, "|") - '0' == -1) {
+            char * token = strtok(buffer, "|");
+            if (atoi(token) == -1) {
                 T1[i][0] = -1;
             } else {
-                T1[i][0] = *strtok(buffer, "|") - '0';
+                T1[i][0] = atoi(token);
             }
-            printf("%d", T1[i][0]);
-            printf("%s", strtok(NULL, "|"));
-            for (int y = 1; y < n; y++) {
-                printf("Lol");
-                printf("%c", *strtok(NULL, "|") - '0');
-                if (strtok(NULL, "|") - '0' == -1) {
 
+            for (int y = 1; y < n; y++) {
+
+                token = strtok(NULL, "|");
+
+                if (atoi(token) == -1) {
                     T1[i][y] = -1;
                 } else {
-
-                    printf("%d", *strtok(NULL, "|") - '0');
-                    T1[i][y] = 0;
+                    T1[i][y] = atoi(token);
                 }
             }
             fgets(buffer, 256, f);
@@ -322,7 +332,7 @@ void puzzle(int *score){
 
 
         fclose(f);
-        affiche(n, T1, &score);
+        affiche(n, T1, score);
         while (a) {
             printf("dans quel direction voulez vous aller ? (l/r/u/d) ou 'a' pour quitter");
             scanf("%c", &dir);
@@ -330,10 +340,10 @@ void puzzle(int *score){
             tolower(dir);
             if (dir == 'a') { a = 0; }
             else {
-                fusion(4, T1, dir);
-                move(4, T1, dir);
-                add_case(n, T1, &score);
-                affiche(n, T1, &score);
+                fusion(n, T1, dir);
+                move(n, T1, dir);
+                add_case(n, T1, score);
+                affiche(n, T1, score);
             }
 
         }
