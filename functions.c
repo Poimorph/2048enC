@@ -350,6 +350,41 @@ void puzzle(int *score){
     }
 }
 
+void Sauvegarde(int n , int T[n][n], int Score ){
+    FILE* fichier = NULL;
+    fichier = fopen("U:\\untitled4\\text.txt","w" );
+    fprintf(fichier, "%d ", n );
+    for(int i =0; i<n ; i++){
+        for (int y = 0 ; y<n ; y++){
+            fprintf(fichier, "%d ", T[i][y] );
+        }
+    }
+    fprintf(fichier, "%d", Score );
+
+    fclose(fichier );
+}
+void Lecture(){
+    FILE* fichier = NULL;
+    int n = 0 , S=0;
+     int T[n][n];
+
+    fichier = fopen("U:\\untitled4\\text.txt", "r");
+
+    if (fichier != NULL)
+    {
+        fscanf(fichier , "%d", &n);
+        for (int i = 0 ; i<n ; i++){
+            for (int y = 0 ; y<n ; y++){
+                fscanf(fichier , "%d", &T[i][y]);
+            }
+        }
+        fscanf(fichier , "%d", &S);
+    }
+}
+
+
+
+
 void jeu(int n, int mode) {
     int score = 0, T1[n][n], T2[n][n];
     if (mode == 1) {
