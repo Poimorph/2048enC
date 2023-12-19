@@ -271,18 +271,45 @@ void duo(int n, int T1[n][n], int T2[n][n], int *score){
 }
 
 void normal(int n, int T1[n][n], int *score){
-    int a = 1;
+    int a = 1 ;
     char dir;
+    char rep= 'd';
+    FILE * fichier = NULL ;
+    fichier = fopen("Save.txt", "r");
+    fseek(fichier,0, SEEK_END);
+    int s = ftell(fichier);
+    fclose(fichier);
+    if (s != 0) {
+        fichier = fopen("Save.txt", "r");
+        fscanf(fichier , "%d",  &n );
+        fclose(fichier);
+        while (rep != 'o' && rep != 'n'){
+            printf("Vous avez une partie de sauvegarder, voulez la continuer ?(oui/non)");
+            scanf("%c", &rep);
+            tolower(rep);
+            fflush(stdin);
 
-    creationTab(n, T1);
-    add_case(n, T1, score);
+        }
+        if (rep =='o'){
+            Lecture(n, T1, score);
+        }
+        else{
+            creationTab(n, T1);
+            add_case(n, T1, score);
+        }
+    }else{
+        creationTab(n, T1);
+        add_case(n, T1, score);
+    }
+
     affiche(n, T1, score);
     while (a) {
         printf("dans quel direction voulez vous aller ? (l/r/u/d) ou 'a' pour quitter");
         scanf("%c", &dir);
         fflush(stdin);
         tolower(dir);
-        if (dir == 'a') { a = 0; }
+        if (dir == 'a') { a = 0;
+            Sauvegarde(n, T1 , *score ); }
         else {
             fusion(n, T1, dir);
             move(n, T1, dir);
@@ -352,7 +379,7 @@ void puzzle(int *score){
 
 void Sauvegarde(int n , int T[n][n], int Score ){
     FILE* fichier = NULL;
-    fichier = fopen("U:\\untitled4\\text.txt","w" );
+    fichier = fopen("Save.txt","w" );
     fprintf(fichier, "%d ", n );
     for(int i =0; i<n ; i++){
         for (int y = 0 ; y<n ; y++){
@@ -363,12 +390,10 @@ void Sauvegarde(int n , int T[n][n], int Score ){
 
     fclose(fichier );
 }
-void Lecture(){
+void Lecture(int n, int T[n][n] , int* Score){
     FILE* fichier = NULL;
-    int n = 0 , S=0;
-     int T[n][n];
 
-    fichier = fopen("U:\\untitled4\\text.txt", "r");
+    fichier = fopen("Save.txt", "r");
 
     if (fichier != NULL)
     {
@@ -378,7 +403,7 @@ void Lecture(){
                 fscanf(fichier , "%d", &T[i][y]);
             }
         }
-        fscanf(fichier , "%d", &S);
+        fscanf(fichier , "%d", Score );
     }
 }
 
@@ -395,3 +420,4 @@ void jeu(int n, int mode) {
         puzzle(&score);
     }
 }
+
