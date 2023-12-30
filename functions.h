@@ -12,5 +12,7 @@ void duo(int n, int T1[n][n], int T2[n][n], int* score);
 void normal(int n, int T1[n][n], int* score);
 void affiche_duo(int n, int T1[n][n], int T2[n][n], int* score);
 void puzzle(int* score);
+void Lecture(int n, int T[n][n] , int* Score);
+void Sauvegarde(int n , int T[n][n], int Score);
 
 #endif //FUNCTIONS_H
