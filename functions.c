@@ -6,14 +6,32 @@
 #include <assert.h>
 #include <ctype.h>
 
-void affiche(int n, int T[n][n],int*Score){
-    /* La fonction affiche, print dans la console le terrain de jeu du 2048*/
-    printf("Score Actuel : %d\n",*Score);
-    for (int i =0; i<n; i++ ){// Nous parcourons le tableaux
-        for (int y =0; y<n; y++ ) {
-            if (T[i][y] == -1){// Nous avons décidé de la lettre X sera représenté par un -1 dans le tableaux.
+
+void affiche(int n, int T[n][n], int *Score) {
+    /** Affiche le terrain de jeu du 2048 dans la console.
+     * @param n      La taille du tableau (assumant que c'est un tableau carré nxn).
+     * @param T      Le tableau bidimensionnel représentant le terrain de jeu.
+     * @param Score  Pointeur vers la variable contenant le score actuel.
+     */
+
+    // Efface l'écran de la console (fonctionnement différent sur Windows et Linux)
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+
+    // Affiche le score actuel
+    printf("Score Actuel : %d\n", *Score);
+
+    // Parcours le tableau et affiche chaque élément
+    for (int i = 0; i < n; i++) {
+        for (int y = 0; y < n; y++) {
+            if (T[i][y] == -1) {
+                // La lettre X est représentée par -1 dans le tableau
                 printf("%-7c", 'X');
             } else {
+                // Affiche la valeur du tableau
                 printf("%-7d", T[i][y]);
             }
         }
@@ -21,15 +39,34 @@ void affiche(int n, int T[n][n],int*Score){
     }
 }
 
-void affiche_duo(int n, int T1[n][n], int T2[n][n], int* score){
-    // Meme principe que pour la fonction affiche() seulement ici nous affichons deux tableaux côte à côte
+
+void affiche_duo(int n, int T1[n][n], int T2[n][n], int *score) {
+    /**
+     * Affiche deux tableaux du jeu 2048 côte à côte dans la console.
+     * @param n     La taille des tableaux (assumant qu'il s'agit de tableaux carrés nxn).
+     * @param T1    Le premier tableau bidimensionnel à afficher.
+     * @param T2    Le deuxième tableau bidimensionnel à afficher.
+     * @param score Pointeur vers la variable contenant le score actuel.
+     */
+
+    // Efface l'écran de la console (fonctionnement différent sur Windows et Linux)
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+
+    // Affiche le score actuel
     printf("Score Actuel ! %d\n", *score);
-    for (int i = 0; i < n; i++){
-        for (int y = 0; y < n; y++){
+
+    // Parcours les deux tableaux et affiche chaque élément côte à côte
+    for (int i = 0; i < n; i++) {
+        for (int y = 0; y < n; y++) {
             printf("%-7d", T1[i][y]);
         }
+        // Ajoute des espaces pour séparer les deux tableaux
         printf("%-7s", "    ");
-        for (int m = 0; m < n; m++){
+        for (int m = 0; m < n; m++) {
             printf("%-7d", T2[i][m]);
         }
         printf("\n");
@@ -62,24 +99,37 @@ void add_case(int length,int Tab[length][length], int *score){
     *score += newValue; // Nous augmentons le score
 }
 
-void move(int n, int T[n][n],char sens){
-    //Dirige toutes las case non nulles dans la direction souhaité
-    int caseLibre[n][2], traker,index;
+void move(int n, int T[n][n], char sens) {
+    /**
+    * Déplace les cases non nulles dans la matrice 2D T dans la direction spécifiée.
+    * Les cases vides sont utilisées pour déplacer les cases non nulles.
+    *
+    * @param n Taille de la matrice (n x n).
+    * @param T Matrice 2D représentant le jeu.
+    * @param sens Direction du déplacement ('d' pour droite, 'q' pour gauche, 'z' pour haut, 's' pour bas).
+    */
+    int caseLibre[n][2], traker, index; // tableau pour suivre les cases libres, variables de suivi
     switch (sens) {
         case 'd':
-            for (int x=0;x<n;x++){
-                traker=0;
-                index=0;
-                for(int y=n-1;y>=0;y--){
-                    if (T[x][y] != -1) {
+            // Déplacement vers la droite
+            for (int x = 0; x < n; x++) {
+                traker = 0; // initialise le suivi des cases libres
+                index = 0; // initialise l'index des cases libres
+                for (int y = n - 1; y >= 0; y--) {
+                    if (T[x][y] != -1)// verifie que la valeur de la case n'est pas un X du mode Puzzle
+                    {
                         if (T[x][y] == 0) {
+                            // Stocke la position des cases libres
                             caseLibre[traker][0] = x;
                             caseLibre[traker][1] = y;
                             traker++;
                         } else if (traker != 0) {
+                            // Déplace la case non nulle vers la case libre
                             int i = caseLibre[index][0], j = caseLibre[index][1];
                             T[i][j] = T[x][y];
                             T[x][y] = 0;
+
+                            // Met à jour les informations sur les cases libres
                             caseLibre[traker][0] = x;
                             caseLibre[traker][1] = y;
                             traker++;
@@ -90,20 +140,25 @@ void move(int n, int T[n][n],char sens){
             }
             break;
         case 'q':
-
-            for (int x=0;x<n;x++){
-                traker=0;
-                index=0;
-                for(int y=0;y<n;y++){
-                    if (T[x][y] != -1) {
+            // Déplacement vers la gauche
+            for (int x = 0; x < n; x++) {
+                traker = 0; // initialise le suivi des cases libres
+                index = 0; // initialise l'index des cases libres
+                for (int y = 0; y < n; y++) {
+                    if (T[x][y] != -1)// verifie que la valeur de la case n'est pas un X du mode Puzzle
+                    {
                         if (T[x][y] == 0) {
+                            // Stocke la position des cases libres
                             caseLibre[traker][0] = x;
                             caseLibre[traker][1] = y;
                             traker++;
                         } else if (traker != 0) {
+                            // Déplace la case non nulle vers la case libre
                             int i = caseLibre[index][0], j = caseLibre[index][1];
                             T[i][j] = T[x][y];
                             T[x][y] = 0;
+
+                            // Met à jour les informations sur les cases libres
                             caseLibre[traker][0] = x;
                             caseLibre[traker][1] = y;
                             traker++;
@@ -114,19 +169,25 @@ void move(int n, int T[n][n],char sens){
             }
             break;
         case 'z':
-            for (int y=0;y<n;y++){
-                traker=0;
-                index=0;
-                for(int x=0;x<n;x++){
-                    if (T[x][y] != -1) {
+            // Déplacement vers le haut
+            for (int y = 0; y < n; y++) {
+                traker = 0; // initialise le suivi des cases libres
+                index = 0; // initialise l'index des cases libres
+                for (int x = 0; x < n; x++) {
+                    if (T[x][y] != -1)// verifie que la valeur de la case n'est pas un X du mode Puzzle
+                    {
                         if (T[x][y] == 0) {
+                            // Stocke la position des cases libres
                             caseLibre[traker][0] = x;
                             caseLibre[traker][1] = y;
                             traker++;
                         } else if (traker != 0) {
+                            // Déplace la case non nulle vers la case libre
                             int i = caseLibre[index][0], j = caseLibre[index][1];
                             T[i][j] = T[x][y];
                             T[x][y] = 0;
+
+                            // Met à jour les informations sur les cases libres
                             caseLibre[traker][0] = x;
                             caseLibre[traker][1] = y;
                             traker++;
@@ -135,22 +196,27 @@ void move(int n, int T[n][n],char sens){
                     }
                 }
             }
-
             break;
         case 's':
-            for (int y=0;y<n;y++){
-                traker=0;
-                index=0;
-                for(int x=n-1;x>=0;x--){
-                    if (T[x][y] != -1) {
+            // Déplacement vers le bas
+            for (int y = 0; y < n; y++) {
+                traker = 0; // initialise le suivi des cases libres
+                index = 0; // initialise l'index des cases libres
+                for (int x = n - 1; x >= 0; x--) {
+                    if (T[x][y] != -1) // verifie que la valeur de la case n'est pas un X du mode Puzzle
+                    {
                         if (T[x][y] == 0) {
+                            // Stocke la position des cases libres
                             caseLibre[traker][0] = x;
                             caseLibre[traker][1] = y;
                             traker++;
                         } else if (traker != 0) {
+                            // Déplace la case non nulle vers la case libre
                             int i = caseLibre[index][0], j = caseLibre[index][1];
                             T[i][j] = T[x][y];
                             T[x][y] = 0;
+
+                            // Met à jour les informations sur les cases libres
                             caseLibre[traker][0] = x;
                             caseLibre[traker][1] = y;
                             traker++;
@@ -267,7 +333,7 @@ void duo(int n, int T1[n][n], int T2[n][n], int *score){
     add_case(n, T2, score);
     affiche_duo(n, T1, T2, score);
     while (jouer) {
-        printf("Dans quel direction voulez-vous aller ? (q/d/z/s) ou 'a' pour quitter\n");
+        printf("dans quel direction voulez vous aller ? \nZ pour se deplacer vers le haut\nS pour se deplacer vers le bas\nD pour se deplacer vers la droite\nQ pour se deplacer vers la gauche\nA pour quitter");
         scanf("%c", &direction);// Récupération du choix du joueur
         fflush(stdin);
         tolower(direction);
@@ -322,7 +388,7 @@ void normal(int n, int T1[n][n], int *score){
 
     affiche(n, T1, score);
     while (jouer) {
-        printf("dans quel direction voulez vous aller ? (l/r/u/d) ou 'a' pour quitter");
+        printf("dans quel direction voulez vous aller ? \nZ pour se deplacer vers le haut\nS pour se deplacer vers le bas\nD pour se deplacer vers la droite\nQ pour se deplacer vers la gauche\nA pour quitter");
         scanf("%c", &dir);
         fflush(stdin);
         tolower(dir);
@@ -391,7 +457,7 @@ void puzzle(int *score){
         affiche(n, T1, score);
         while (jouer) {
             //Similaire à la fonction normal() du programme
-            printf("dans quel direction voulez vous aller ? (q/d/z/s) ou 'a' pour quitter");
+            printf("dans quel direction voulez vous aller ? \nZ pour se deplacer vers le haut\nS pour se deplacer vers le bas\nD pour se deplacer vers la droite\nQ pour se deplacer vers la gauche\nA pour quitter");
             scanf("%c", &dir);
             fflush(stdin);
             tolower(dir);

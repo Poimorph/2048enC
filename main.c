@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include "functions.h"
 #include <stdlib.h>
+#include <ctype.h>
 
 int main(){
     char rep='d';
 
     while (rep!='o' && rep!='n'){ // Demande au joueur si il veut lance une partie
-        printf("Voulez-vous jouer ? (oui/non)");
+        printf("Voulez-vous jouer ? (O/N)");
         scanf("%c",&rep);
+        tolower(rep);
         fflush(stdin);
         if(rep!='o' && rep!='n'){
             printf("Saisie incorrect, Veuillez resaisir ! \n");
