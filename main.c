@@ -9,7 +9,7 @@ int main(){
     while (rep!='o' && rep!='n'){ // Demande au joueur si il veut lance une partie
         printf("Voulez-vous jouer ? (O/N)");
         scanf("%c",&rep);
-        tolower(rep);
+        rep=tolower(rep);
         fflush(stdin);
         if(rep!='o' && rep!='n'){
             printf("Saisie incorrect, Veuillez resaisir ! \n");

@@ -6,13 +6,12 @@
 #include <assert.h>
 #include <ctype.h>
 
-
-void affiche(int n, int T[n][n], int *Score) {
-    /** Affiche le terrain de jeu du 2048 dans la console.
-     * @param n      La taille du tableau (assumant que c'est un tableau carré nxn).
-     * @param T      Le tableau bidimensionnel représentant le terrain de jeu.
-     * @param Score  Pointeur vers la variable contenant le score actuel.
+/** Affiche le terrain de jeu du 2048 dans la console.
+     * @param n      : La taille du tableau (assumant que c'est un tableau carré nxn).
+     * @param T      : Le tableau bidimensionnel représentant le terrain de jeu.
+     * @param Score  : Pointeur vers la variable contenant le score actuel.
      */
+void affiche(int n, int T[n][n], int *Score) {
 
     // Efface l'écran de la console (fonctionnement différent sur Windows et Linux)
     #ifdef _WIN32
@@ -39,15 +38,14 @@ void affiche(int n, int T[n][n], int *Score) {
     }
 }
 
-
-void affiche_duo(int n, int T1[n][n], int T2[n][n], int *score) {
-    /**
+/**
      * Affiche deux tableaux du jeu 2048 côte à côte dans la console.
-     * @param n     La taille des tableaux (assumant qu'il s'agit de tableaux carrés nxn).
-     * @param T1    Le premier tableau bidimensionnel à afficher.
-     * @param T2    Le deuxième tableau bidimensionnel à afficher.
-     * @param score Pointeur vers la variable contenant le score actuel.
+     * @param n     : La taille des tableaux (assumant qu'il s'agit de tableaux carrés nxn).
+     * @param T1    : Le premier tableau bidimensionnel à afficher.
+     * @param T2    : Le deuxième tableau bidimensionnel à afficher.
+     * @param score : Pointeur vers la variable contenant le score actuel.
      */
+void affiche_duo(int n, int T1[n][n], int T2[n][n], int *score) {
 
     // Efface l'écran de la console (fonctionnement différent sur Windows et Linux)
     #ifdef _WIN32
@@ -83,9 +81,8 @@ int compare(int value1, int value2){
     }}
 
 void add_case(int length,int Tab[length][length], int *score){
-
     /* Ajoute une case de valeur compris entre {2, 4}*/
-
+    srand(time(0));
     // On prend des valeurs aléatoires pour les coordonnées X et Y
     int x = (rand()%length);
     int y = (rand()%length);
@@ -99,16 +96,19 @@ void add_case(int length,int Tab[length][length], int *score){
     *score += newValue; // Nous augmentons le score
 }
 
-void move(int n, int T[n][n], char sens) {
-    /**
+/**
     * Déplace les cases non nulles dans la matrice 2D T dans la direction spécifiée.
     * Les cases vides sont utilisées pour déplacer les cases non nulles.
     *
     * @param n Taille de la matrice (n x n).
     * @param T Matrice 2D représentant le jeu.
     * @param sens Direction du déplacement ('d' pour droite, 'q' pour gauche, 'z' pour haut, 's' pour bas).
+    * @return Le nombre de déplacements effectués (nombre de cases non nulles déplacées) ce qui permet de savoir
+    * un déplacement a été effectué ou pas.
     */
-    int caseLibre[n][2], traker, index; // tableau pour suivre les cases libres, variables de suivi
+int move(int n, int T[n][n], char sens) {
+
+    int caseLibre[n][2], traker=0, index=0; // tableau pour suivre les cases libres, variables de suivi
     switch (sens) {
         case 'd':
             // Déplacement vers la droite
@@ -229,90 +229,112 @@ void move(int n, int T[n][n], char sens) {
         default:
             break;
     }
+    return index;
 }
 
-void fusion(int n, int Tab[n][n], char sensRotation){
-    /*    On prendra :
-          d pour de gauche à droite
-          q pour de droit à gauche
-          s pour de haut en bas
-          z pour de bas en haut*/
+/**
+ * Fusionne les éléments adjacents dans la matrice 2D `Tab` selon la direction spécifiée.
+ * La fusion est effectuée en suivant les règles du jeu (2 éléments identiques fusionnent).
+ *
+ * @param n Taille de la matrice (n x n).
+ * @param Tab Matrice 2D représentant le jeu.
+ * @param sensRotation Direction de la fusion ('d' pour de gauche à droite, 'q' pour de droit à gauche,
+ *                      'z' pour de bas en haut, 's' pour de haut en bas).
+ * @return Un indicateur de fusion (1 si au moins une fusion de cases non nulles a eu lieu, 0 sinon).
+ */
+int fusion(int n, int Tab[n][n], char sensRotation) {
+    int fuseHappend=0; // Indicateur de fusion
+    switch (sensRotation) {
 
-    switch(sensRotation){
-
-        // Le principe du code est le même pour les 4 possibilité du switch
-
+        // Fusion des éléments en direction de la droite
         case 'd':
-
-            for (int x = 0; x < n; x++){
-                for (int y = n-1; y >=0; y--){ // Nous parcourons le tableaux de droite à gauche
-                    for(int j=y-1;j>=0;j--){
-                        if (compare(Tab[x][y], Tab[x][j])){ // J est une variable qui vérifie toujours y-j = 1
-                            Tab[x][y] = Tab[x][y]*2;                        //donc nous comparons un élément avec son précéent dans la liste
-                            Tab[x][j] = 0;                                  //pour vérifier si ils peuvent être fusionnées
-                            j=-1;
-                        }
-                        else if (Tab[x][j]!=0){ // Si la valeur précédentes à y n'est pas égale à y ni à 0 alors on sort de la boucle.
-                            j=-1;
+            for (int x = 0; x < n; x++) {
+                for (int y = n - 1; y >= 0; y--) { // Parcours de droite à gauche
+                    for (int j = y - 1; j >= 0; j--) {
+                        if (compare(Tab[x][y], Tab[x][j])) {
+                            // Fusionne deux éléments identiques
+                            Tab[x][y] = Tab[x][y] * 2;
+                            Tab[x][j] = 0;
+                            if(Tab[x][y]!=0){
+                                fuseHappend=1; // Indique qu'une fusion a eu lieu
+                            }
+                            j = -1; // Sort de la boucle interne
+                        } else if (Tab[x][j] != 0) {
+                            j = -1; // Sort de la boucle interne
                         }
                     }
                 }
             }
-
             break;
-        case 'q':
 
-            for (int x = 0; x < n; x++){
-                for (int y = 0; y < n; y++){
-                    for(int j=y+1;j<n;j++){
-                        if (compare(Tab[x][y], Tab[x][j])){
+            // Fusion des éléments en direction de la gauche
+        case 'q':
+            for (int x = 0; x < n; x++) {
+                for (int y = 0; y < n; y++) {
+                    for (int j = y + 1; j < n; j++) {
+                        if (compare(Tab[x][y], Tab[x][j])) {
+                            // Fusionne deux éléments identiques
                             Tab[x][y] += Tab[x][j];
                             Tab[x][j] = 0;
-                            j=n;
-                        }
-                        else if (Tab[x][j]!=0){
-                            j=n;
+                            if(Tab[x][y]!=0){
+                                fuseHappend=1; // Indique qu'une fusion a eu lieu
+                            }
+                            j = n; // Sort de la boucle interne
+                        } else if (Tab[x][j] != 0) {
+                            j = n; // Sort de la boucle interne
                         }
                     }
                 }
             }
             break;
-        case 'z':
 
-            for (int y=0; y < n; y++) {
+            // Fusion des éléments en direction du haut
+        case 'z':
+            for (int y = 0; y < n; y++) {
                 for (int x = 0; x < n; x++) {
                     for (int j = x + 1; j < n; j++) {
                         if (compare(Tab[x][y], Tab[j][y])) {
+                            // Fusionne deux éléments identiques
                             Tab[x][y] = 2 * Tab[x][y];
                             Tab[j][y] = 0;
-                            j = n;
+                            if(Tab[x][y]!=0){
+                            fuseHappend=1; // Indique qu'une fusion a eu lieu
+                            }
+                            j = n; // Sort de la boucle interne
                         } else if (Tab[j][y] != 0) {
-                            j = n;
+                            j = n; // Sort de la boucle interne
                         }
                     }
                 }
             }
             break;
-        case 's':
 
-            for (int y = 0; y < n; y++){
-                for (int x = n-1; x >=0; x--){
-                    for (int j=x-1;j>=0;j--){
-                        if (compare(Tab[x][y], Tab[j][y])){
+            // Fusion des éléments en direction du bas
+        case 's':
+            for (int y = 0; y < n; y++) {
+                for (int x = n - 1; x >= 0; x--) {
+                    for (int j = x - 1; j >= 0; j--) {
+                        if (compare(Tab[x][y], Tab[j][y])) {
+                            // Fusionne deux éléments identiques
                             Tab[x][y] += Tab[j][y];
                             Tab[j][y] = 0;
-                            j=-1;
-                        }
-                        else if (Tab[j][x]!=0){
-                            j=-1;
+                            if(Tab[x][y]!=0){
+                                fuseHappend=1; // Indique qu'une fusion a eu lieu
+                            }
+                            j = -1; // Sort de la boucle interne
+                        } else if (Tab[j][x] != 0) {
+                            j = -1; // Sort de la boucle interne
                         }
                     }
-                }}
-            break;
-        default:
+                }
+            }
             break;
 
-    }}
+        default:
+            break;
+    }
+    return fuseHappend;
+}
 void creationTab(int n,int T[n][n]){
     /*Créer un tableaux à double dimensions vide*/
     for (int i=0;i<n;i++){
@@ -321,90 +343,129 @@ void creationTab(int n,int T[n][n]){
         }
     }
 }
-
+/**
+ * Fonction principale du mode duo du jeu 2048.
+ * Permet à un joueur de jouer sur deux grilles distinctes en parallèle.
+ * @param n Taille des tableaux T1 et T2
+ * @param T1 Premier tableau de jeu
+ * @param T2 Deuxième tableau de jeu
+ * @param score Pointeur vers la variable de score
+ */
 void duo(int n, int T1[n][n], int T2[n][n], int *score){
     /* Fonction principale du mode duo*/
-    int jouer = 1;
-    char direction;
-    //Préparation du mode de jeu
-    creationTab(n, T1);
-    creationTab(n, T2);
-    add_case(n, T1, score);
-    add_case(n, T2, score);
-    affiche_duo(n, T1, T2, score);
+
+    int jouer = 1;  // Variable de contrôle pour la boucle principale du jeu.
+    char direction;  // Variable pour stocker la direction choisie par le joueur.
+
+    // Préparation du mode de jeu
+    creationTab(n, T1);  // Initialisation du tableau T1.
+    creationTab(n, T2);  // Initialisation du tableau T2.
+    add_case(n, T1, score);  // Ajout d'une case aléatoire dans le tableau T1.
+    add_case(n, T2, score);  // Ajout d'une case aléatoire dans le tableau T2.
+    affiche_duo(n, T1, T2, score);  // Affichage des deux tableaux et du score.
+
+    // Variables pour suivre les événements de fusion et de mouvement :
+    int fusionHappend1, movementHappend1, fusionHappend2, movementHappend2;
+
+    // Boucle principale du jeu
     while (jouer) {
         printf("dans quel direction voulez vous aller ? \nZ pour se deplacer vers le haut\nS pour se deplacer vers le bas\nD pour se deplacer vers la droite\nQ pour se deplacer vers la gauche\nA pour quitter");
-        scanf("%c", &direction);// Récupération du choix du joueur
+        scanf("%c", &direction);  // Récupération du choix du joueur.
         fflush(stdin);
-        tolower(direction);
+        direction = tolower(direction);  // Conversion de la direction en minuscule pour simplifier la gestion.
+
         if (direction == 'a') {
-            jouer = 0; //Si le joueur décide de mettre fin à sa partie
+            jouer = 0;  // Si le joueur décide de mettre fin à sa partie.
         }
         else {
-            fusion(n, T1, direction);// Opération de fusion dans les deux tableaux
-            fusion(n, T2, direction);
-            move(n, T1, direction);// Opération de mouvement dans les deux tableaux
-            move(n, T2, direction);
-            add_case(n, T1, score);// Ajout de case aléatoires dans les deux tableaux
-            add_case(n, T2, score);
-            affiche_duo(n, T1, T2, score);// Affichage des deux tableaux
+            // Opérations de fusion et de mouvement dans les deux tableaux.
+            fusionHappend1 = fusion(n, T1, direction);
+            fusionHappend2 = fusion(n, T2, direction);
+            movementHappend1 = move(n, T1, direction);
+            movementHappend2 = move(n, T2, direction);
+
+            // Si une fusion ou un mouvement a eu lieu dans l'un des tableaux, ajoute une nouvelle case aléatoire dans le même tableau.
+            if (fusionHappend1 || movementHappend1) {
+                add_case(n, T1, score);
+            }
+            if (fusionHappend2 || movementHappend2) {
+                add_case(n, T2, score);
+            }
+
+            // Affichage des deux tableaux et du score.
+            affiche_duo(n, T1, T2, score);
         }
     }
 }
 
-void normal(int n, int T1[n][n], int *score){
-    /*Fonction principale du mode normal*/
-    int jouer = 1 ;
-    char dir;
-    char rep= 'd';
-    //Tentative de récupération du fichier de sauvegarde
-    FILE * fichier = NULL ;
+
+/**
+ * Fonction principale du mode normal du jeu 2048.
+ * Permet à un joueur de jouer en mode normal avec la possibilité de sauvegarder et reprendre la partie.
+ * @param n Taille du tableau de jeu
+ * @param T1 Tableau de jeu principal
+ * @param score Pointeur vers la variable de score
+ */
+void normal(int n, int T1[n][n], int *score) {
+    /* Fonction principale du mode normal */
+
+    int jouer = 1;  // Variable de contrôle pour la boucle principale du jeu.
+    char dir;       // Variable pour stocker la direction choisie par le joueur.
+    char rep = 'd'; // Variable pour la réponse du joueur concernant la reprise de la sauvegarde.
+
+    // Tentative de récupération du fichier de sauvegarde
+    FILE * fichier = NULL;
     fichier = fopen("Save.txt", "r");
-    fseek(fichier,0, SEEK_END);
+    fseek(fichier, 0, SEEK_END);
     int s = ftell(fichier);
     fclose(fichier);
-    if (s != 0) { // Si le fichier de sauveagrde existe
-        //fichier = fopen("Save.txt", "r");
-        //fclose(fichier);
-        while (rep != 'o' && rep != 'n'){// Demande au joueur si il veut reprendre son fichier de sauvegarde.
-            printf("Vous avez une partie de sauvegarder, voulez la continuer ?(oui/non)");
-            scanf("%c", &rep);
-            tolower(rep);
-            fflush(stdin);
 
+    if (s != 0) { // Si le fichier de sauvegarde existe
+        while (rep != 'o' && rep != 'n') {
+            printf("Vous avez une partie de sauvegarde, voulez la continuer ? (O/N)");
+            scanf("%c", &rep);
+            rep = tolower(rep);
+            fflush(stdin);
         }
-        if (rep =='o'){
-            Lecture(n, T1, score); // Si oui récupérons les données du fichier de sauvegarde et on remplis le tableaux
-        }
-        else{
-            creationTab(n, T1);// Sinon on créer un nouveau tableaux
-            printf("%d", n);
+
+        if (rep == 'o') {
+            Lecture(n, T1, score); // Reprendre les données du fichier de sauvegarde et remplir le tableau.
+        } else {
+            creationTab(n, T1); // Créer un nouveau tableau si le joueur ne souhaite pas reprendre la sauvegarde.
             add_case(n, T1, score);
         }
-    }else{
-        creationTab(n, T1);// SI aucun fichier de sauvarge détécté.
+    } else {
+        creationTab(n, T1); // Créer un nouveau tableau si aucun fichier de sauvegarde n'est détecté.
         add_case(n, T1, score);
     }
 
-    affiche(n, T1, score);
+    affiche(n, T1, score); // Afficher le tableau initial.
+
+    int fusionHappend, movementHappend;
+
+    // Boucle principale du jeu
     while (jouer) {
-        printf("dans quel direction voulez vous aller ? \nZ pour se deplacer vers le haut\nS pour se deplacer vers le bas\nD pour se deplacer vers la droite\nQ pour se deplacer vers la gauche\nA pour quitter");
+        printf("Dans quelle direction voulez-vous aller ? \nZ pour se déplacer vers le haut\nS pour se déplacer vers le bas\nD pour se déplacer vers la droite\nQ pour se déplacer vers la gauche\nA pour quitter");
         scanf("%c", &dir);
         fflush(stdin);
-        tolower(dir);
-        if (dir == 'a') {
-            jouer = 0;
-            Sauvegarde(n, T1 , *score );// Sauvegarde du tableaux dans un fichier en cas d'arret.
-        }
-        else {
-            fusion(n, T1, dir);
-            move(n, T1, dir);
-            add_case(n, T1, score);
-            affiche(n, T1, score);
-        }
+        dir = tolower(dir);
 
+        if (dir == 'a') {
+            jouer = 0; // Si le joueur décide de mettre fin à la partie, sauvegarder le tableau dans un fichier.
+            Sauvegarde(n, T1, *score);
+        } else {
+            fusionHappend = fusion(n, T1, dir);
+            movementHappend = move(n, T1, dir);
+
+            if (fusionHappend || movementHappend) {
+                add_case(n, T1, score); // Ajouter une nouvelle case aléatoire si une fusion ou un mouvement a eu lieu.
+            }
+
+            affiche(n, T1, score); // Afficher le tableau après chaque coup.
+        }
     }
 }
+
 
 void puzzle(int *score){
     /*Fonction principale du mode puzzle */
@@ -455,19 +516,20 @@ void puzzle(int *score){
 
         fclose(f);
         affiche(n, T1, score);
+        int fusionHappend,movementHappend;
         while (jouer) {
             //Similaire à la fonction normal() du programme
             printf("dans quel direction voulez vous aller ? \nZ pour se deplacer vers le haut\nS pour se deplacer vers le bas\nD pour se deplacer vers la droite\nQ pour se deplacer vers la gauche\nA pour quitter");
             scanf("%c", &dir);
             fflush(stdin);
-            tolower(dir);
+            dir=tolower(dir);
             if (dir == 'a') {
                 jouer = 0;
             }
             else {
-                fusion(n, T1, dir);
-                move(n, T1, dir);
-                add_case(n, T1, score);
+                fusionHappend=fusion(n, T1, dir);
+                movementHappend=move(n, T1, dir);
+                if(fusionHappend||movementHappend){add_case(n, T1, score);}
                 affiche(n, T1, score);
             }
 
