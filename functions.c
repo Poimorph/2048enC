@@ -6,12 +6,16 @@
 #include <assert.h>
 #include <ctype.h>
 
-/** Affiche le terrain de jeu du 2048 dans la console.
+
+/** Affiche le terrain de jeu du 2048enC dans la console.
      * @param n      : La taille du tableau (assumant que c'est un tableau carré nxn).
      * @param T      : Le tableau bidimensionnel représentant le terrain de jeu.
      * @param Score  : Pointeur vers la variable contenant le score actuel.
      */
 void affiche(int n, int T[n][n], int *Score) {
+
+
+
 
     // Affiche le score actuel
     printf("Score Actuel : %d\n", *Score);
@@ -32,13 +36,15 @@ void affiche(int n, int T[n][n], int *Score) {
 }
 
 /**
-     * Affiche deux tableaux du jeu 2048 côte à côte dans la console.
+     * Affiche deux tableaux du jeu 2048enC côte à côte dans la console.
      * @param n     : La taille des tableaux (assumant qu'il s'agit de tableaux carrés nxn).
      * @param T1    : Le premier tableau bidimensionnel à afficher.
      * @param T2    : Le deuxième tableau bidimensionnel à afficher.
      * @param score : Pointeur vers la variable contenant le score actuel.
      */
 void affiche_duo(int n, int T1[n][n], int T2[n][n], int *score) {
+
+
 
     // Affiche le score actuel
     printf("Score Actuel ! %d\n", *score);
@@ -68,12 +74,12 @@ int compare(int value1, int value2){
 
 void add_case(int length,int Tab[length][length], int *score){
     /* Ajoute une case de valeur compris entre {2, 4}*/
-    srand(time(0));
+
     // On prend des valeurs aléatoires pour les coordonnées X et Y
     int x = (rand()%length);
     int y = (rand()%length);
 
-    while (Tab[y][x] != 0){ // On cherche pour quelles coordonnées X et Y la case peut être ajouté
+    while (Tab[y][x] != 0 && y < length && x < length){ // On cherche pour quelles coordonnées X et Y la case peut être ajouté
         x = (rand()%length);
         y = (rand()%length);
     }
@@ -330,7 +336,7 @@ void creationTab(int n,int T[n][n]){
     }
 }
 /**
- * Fonction principale du mode duo du jeu 2048.
+ * Fonction principale du mode duo du jeu 2048enC.
  * Permet à un joueur de jouer sur deux grilles distinctes en parallèle.
  * @param n Taille des tableaux T1 et T2
  * @param T1 Premier tableau de jeu
@@ -355,7 +361,7 @@ void duo(int n, int T1[n][n], int T2[n][n], int *score){
 
     // Boucle principale du jeu
     while (jouer) {
-        printf("dans quel direction voulez vous aller ? \nZ pour se deplacer vers le haut\nS pour se deplacer vers le bas\nD pour se deplacer vers la droite\nQ pour se deplacer vers la gauche\nA pour quitter");
+        printf("dans quel direction voulez vous aller ? \nZ pour se deplacer vers le haut\nS pour se deplacer vers le bas\nD pour se deplacer vers la droite\nQ pour se deplacer vers la gauche\nA pour quitter\n");
         scanf("%c", &direction);  // Récupération du choix du joueur.
         fflush(stdin);
         direction = tolower(direction);  // Conversion de la direction en minuscule pour simplifier la gestion.
@@ -386,7 +392,7 @@ void duo(int n, int T1[n][n], int T2[n][n], int *score){
 
 
 /**
- * Fonction principale du mode normal du jeu 2048.
+ * Fonction principale du mode normal du jeu 2048enC.
  * Permet à un joueur de jouer en mode normal avec la possibilité de sauvegarder et reprendre la partie.
  * @param n Taille du tableau de jeu
  * @param T1 Tableau de jeu principal
@@ -431,7 +437,7 @@ void normal(int n, int T1[n][n], int *score) {
 
     // Boucle principale du jeu
     while (jouer) {
-        printf("Dans quelle direction voulez-vous aller ? \nZ pour se déplacer vers le haut\nS pour se déplacer vers le bas\nD pour se déplacer vers la droite\nQ pour se déplacer vers la gauche\nA pour quitter");
+        printf("Dans quelle direction voulez-vous aller ? \nZ pour se deplacer vers le haut\nS pour se deplacer vers le bas\nD pour se deplacer vers la droite\nQ pour se deplacer vers la gauche\nA pour quitter\n");
         scanf("%c", &dir);
         fflush(stdin);
         dir = tolower(dir);
@@ -559,6 +565,8 @@ void Lecture(int n, int T[n][n] , int* Score){
 
 
 void jeu(int n, int mode) {
+    //On initialise la library
+    srand(time(0));
     /* Prend en paramètre un Integer qui décide du mode de jeu choisis*/
 
     int score = 0, T1[n][n], T2[n][n];
