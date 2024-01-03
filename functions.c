@@ -13,13 +13,6 @@
      */
 void affiche(int n, int T[n][n], int *Score) {
 
-    // Efface l'écran de la console (fonctionnement différent sur Windows et Linux)
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif
-
     // Affiche le score actuel
     printf("Score Actuel : %d\n", *Score);
 
@@ -46,13 +39,6 @@ void affiche(int n, int T[n][n], int *Score) {
      * @param score : Pointeur vers la variable contenant le score actuel.
      */
 void affiche_duo(int n, int T1[n][n], int T2[n][n], int *score) {
-
-    // Efface l'écran de la console (fonctionnement différent sur Windows et Linux)
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif
 
     // Affiche le score actuel
     printf("Score Actuel ! %d\n", *score);
