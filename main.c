@@ -2,9 +2,11 @@
 #include "functions.h"
 #include <stdlib.h>
 #include <ctype.h>
+#include <time.h>
 
 int main(){
     char rep='d';
+    srand(time(0));
 
     while (rep!='o' && rep!='n'){ // Demande au joueur si il veut lance une partie
         printf("Voulez-vous jouer ? (O/N)");

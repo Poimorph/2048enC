@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "functions.h"
-#include <time.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -95,12 +94,12 @@ void add_case(int length,int Tab[length][length], int *score){
     * @param n Taille de la matrice (n x n).
     * @param T Matrice 2D représentant le jeu.
     * @param sens Direction du déplacement ('d' pour droite, 'q' pour gauche, 'z' pour haut, 's' pour bas).
-    * @return Le nombre de déplacements effectués (nombre de cases non nulles déplacées) ce qui permet de savoir
-    * un déplacement a été effectué ou pas.
+    * @return Un indicateur de mouvement (1 si au moins une case non nulle est déplacée, 0 sinon).
     */
 int move(int n, int T[n][n], char sens) {
 
     int caseLibre[n][2], traker=0, index=0; // tableau pour suivre les cases libres, variables de suivi
+    int moveHappend=0; //indicateur de mouvement
     switch (sens) {
         case 'd':
             // Déplacement vers la droite
@@ -126,6 +125,8 @@ int move(int n, int T[n][n], char sens) {
                             caseLibre[traker][1] = y;
                             traker++;
                             index++;
+
+                            moveHappend=1; // Indique qu'un mouvement a eu lieu
                         }
                     }
                 }
@@ -155,10 +156,15 @@ int move(int n, int T[n][n], char sens) {
                             caseLibre[traker][1] = y;
                             traker++;
                             index++;
+
+                            moveHappend=1; // Indique qu'un mouvement a eu lieu
+                        }
+                    }
+                    else{
+                        index=traker;
                         }
                     }
                 }
-            }
             break;
         case 'z':
             // Déplacement vers le haut
@@ -184,7 +190,12 @@ int move(int n, int T[n][n], char sens) {
                             caseLibre[traker][1] = y;
                             traker++;
                             index++;
+
+                            moveHappend=1; // Indique qu'un mouvement a eu lieu
                         }
+                    }
+                    else{
+                        index=traker;
                     }
                 }
             }
@@ -213,7 +224,12 @@ int move(int n, int T[n][n], char sens) {
                             caseLibre[traker][1] = y;
                             traker++;
                             index++;
+
+                            moveHappend=1; // Indique qu'un mouvement a eu lieu
                         }
+                    }
+                    else{
+                        index=traker;
                     }
                 }
             }
@@ -221,7 +237,7 @@ int move(int n, int T[n][n], char sens) {
         default:
             break;
     }
-    return index;
+    return moveHappend;
 }
 
 /**
@@ -466,11 +482,10 @@ void puzzle(int *score){
 
 
     //Ouverture du fichier puzzle.
-    FILE* f = fopen("./puzzleOne.txt", "r");
+    FILE* f = fopen("../Puzzle/puzzleOne.txt", "r");
 
     if (f != NULL) {
         //Récupération de la taille du tableaux
-
 
         char buffer[256];
         fgets(buffer, 256, f);
@@ -566,7 +581,6 @@ void Lecture(int n, int T[n][n] , int* Score){
 
 void jeu(int n, int mode) {
     //On initialise la library
-    srand(time(0));
     /* Prend en paramètre un Integer qui décide du mode de jeu choisis*/
 
     int score = 0, T1[n][n], T2[n][n];
