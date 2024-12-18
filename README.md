@@ -40,7 +40,6 @@ Ce projet a été réalisé dans le cadre de l'UE IF2 (Algorithmique et Programm
 ### Prérequis
 - GCC (GNU Compiler Collection)
 - Make
-- SDL
 
 ### Compilation
 1. Clonez le dépôt :
