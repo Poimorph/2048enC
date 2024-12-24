@@ -1,11 +1,119 @@
 #include "functions.h"
 
+char handle_input(SDL_Event event) {
+    if (event.type == SDL_KEYDOWN) {
+        switch (event.key.keysym.sym) {
+            case SDLK_z:
+            case SDLK_UP:
+                return 'z';
+            case SDLK_s:
+            case SDLK_DOWN:
+                return 's';
+            case SDLK_d:
+            case SDLK_RIGHT:
+                return 'd';
+            case SDLK_q:
+            case SDLK_LEFT:
+                return 'q';
+            case SDLK_a:
+            case SDLK_ESCAPE:
+                return 'a';
+            default:
+                return '\0';
+        }
+    }
+    return '\0';
+}
+
+
+/**
+ * Fonction principale du mode normal du jeu 2048enC.
+ * Permet à un joueur de jouer en mode normal avec la possibilité de sauvegarder et reprendre la partie.
+ * @param n Taille du tableau de jeu
+ * @param T1 Tableau de jeu principal
+ * @param score Pointeur vers la variable de score
+ */
+void normal(int n, int T1[n][n], int* score) {
+    int jouer = 1;
+    char dir;
+    char rep = 'n';
+    SDL_Event event;
+    
+    // IMPORTANT : Vérifie d'abord s'il existe une sauvegarde
+    if (has_save(1, n)) {
+        printf("Une partie sauvegardée existe pour ce mode et cette taille.\n");
+        printf("Voulez-vous la continuer ? (O/N) ");
+        
+        do {
+            scanf(" %c", &rep);
+            rep = tolower(rep);
+            while(getchar() != '\n');  // Vide le buffer
+            
+            if (rep != 'o' && rep != 'n') {
+                printf("Veuillez répondre par O (oui) ou N (non) : ");
+            }
+        } while (rep != 'o' && rep != 'n');
+    }
+    
+    // Initialisation en fonction de la réponse
+    if (rep == 'o') {
+        if (!Lecture(n, T1, score, 1)) {
+            printf("Erreur de chargement. Démarrage d'une nouvelle partie.\n");
+            creationTab(n, T1);
+            *score = 0;
+            add_case(n, T1, score);
+        }
+    } else {
+        creationTab(n, T1);
+        *score = 0;
+        add_case(n, T1, score);
+        add_case(n, T1, score);  // Ajoute deux cases au début
+    }
+    
+    affiche(n, T1, score);
+    
+    // Boucle principale du jeu
+    while (jouer) {
+            while (SDL_PollEvent(&event)) {
+                if (event.type == SDL_QUIT) {
+                    jouer = 0;
+                    Sauvegarde(n, T1, *score, 1);
+                    break;
+                }
+                dir = handle_input(event);
+                printf("Key pressed: %d\n", event.key.keysym.sym);
+                if (dir != '\0') {
+                    if (dir == 'a') {
+                        jouer = 0;
+                        Sauvegarde(n, T1, *score, 1);
+                    } 
+                    else {
+                        int moved = move(n, T1, dir);
+                        int fused = fusion(n, T1, dir);
+                        
+                        if (fused) {
+                            moved = move(n, T1, dir) || moved;
+                        }
+                        
+                        if (moved || fused) {
+                            add_case(n, T1, score);
+                        }
+                        
+                        affiche(n, T1, score);
+                    }
+                }
+        }
+        SDL_Delay(10);
+    }
+}
+
 
 void duo(int n, int T1[n][n], int T2[n][n], int *score){
     /* Fonction principale du mode duo*/
     int jouer = 1;
     char dir;
     char rep = 'n';
+    SDL_Event event;
 
     // Vérifie s'il existe une sauvegarde pour le mode duo
     if (has_save(2, n)) {
@@ -48,113 +156,48 @@ void duo(int n, int T1[n][n], int T2[n][n], int *score){
     int fusionHappend1, movementHappend1, fusionHappend2, movementHappend2;
 
     while (jouer) {
-        printf("\nDirections: [Z]Haut [S]Bas [D]Droite [Q]Gauche [A]Quitter\nVotre choix: ");
-        scanf(" %c", &dir);
-        while(getchar() != '\n');
-        dir = tolower(dir);
-
-        if (dir == 'a') {
-            jouer = 0;
-            Sauvegarde_duo(n, T1, T2, *score);  // Sauvegarde avant de quitter
-        } else if (strchr("zsdq", dir) != NULL) {
-            // Premier tableau
-            fusionHappend1 = fusion(n, T1, dir);
-            movementHappend1 = move(n, T1, dir);
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                jouer = 0;
+                Sauvegarde_duo(n, T1, T2, *score);
+                break;
+            }
             
-            if (fusionHappend1) {
-                movementHappend1 = move(n, T1, dir) || movementHappend1;
-            }
+            dir = handle_input(event);
+            if (dir != '\0') {
+                if (dir == 'a') {
+                    jouer = 0;
+                    Sauvegarde_duo(n, T1, T2, *score);  // Sauvegarde avant de quitter
+                } else {
+                    // Premier tableau
+                    fusionHappend1 = fusion(n, T1, dir);
+                    movementHappend1 = move(n, T1, dir);
+                    
+                    if (fusionHappend1) {
+                        movementHappend1 = move(n, T1, dir) || movementHappend1;
+                    }
 
-            // Deuxième tableau
-            fusionHappend2 = fusion(n, T2, dir);
-            movementHappend2 = move(n, T2, dir);
-            
-            if (fusionHappend2) {
-                movementHappend2 = move(n, T2, dir) || movementHappend2;
-            }
+                    // Deuxième tableau
+                    fusionHappend2 = fusion(n, T2, dir);
+                    movementHappend2 = move(n, T2, dir);
+                    
+                    if (fusionHappend2) {
+                        movementHappend2 = move(n, T2, dir) || movementHappend2;
+                    }
 
-            // Ajoute de nouvelles cases si nécessaire
-            if (fusionHappend1 || movementHappend1) {
-                add_case(n, T1, score);
-            }
-            if (fusionHappend2 || movementHappend2) {
-                add_case(n, T2, score);
-            }
+                    // Ajoute de nouvelles cases si nécessaire
+                    if (fusionHappend1 || movementHappend1) {
+                        add_case(n, T1, score);
+                    }
+                    if (fusionHappend2 || movementHappend2) {
+                        add_case(n, T2, score);
+                    }
 
-            affiche_duo(n, T1, T2, score);
+                    affiche_duo(n, T1, T2, score);
+                }
+            }
         }
-    }
-}
-
-/**
- * Fonction principale du mode normal du jeu 2048enC.
- * Permet à un joueur de jouer en mode normal avec la possibilité de sauvegarder et reprendre la partie.
- * @param n Taille du tableau de jeu
- * @param T1 Tableau de jeu principal
- * @param score Pointeur vers la variable de score
- */
-void normal(int n, int T1[n][n], int* score) {
-    int jouer = 1;
-    char dir;
-    char rep = 'n';
-    
-    // IMPORTANT : Vérifie d'abord s'il existe une sauvegarde
-    if (has_save(1, n)) {
-        printf("Une partie sauvegardée existe pour ce mode et cette taille.\n");
-        printf("Voulez-vous la continuer ? (O/N) ");
-        
-        do {
-            scanf(" %c", &rep);
-            rep = tolower(rep);
-            while(getchar() != '\n');  // Vide le buffer
-            
-            if (rep != 'o' && rep != 'n') {
-                printf("Veuillez répondre par O (oui) ou N (non) : ");
-            }
-        } while (rep != 'o' && rep != 'n');
-    }
-    
-    // Initialisation en fonction de la réponse
-    if (rep == 'o') {
-        if (!Lecture(n, T1, score, 1)) {
-            printf("Erreur de chargement. Démarrage d'une nouvelle partie.\n");
-            creationTab(n, T1);
-            *score = 0;
-            add_case(n, T1, score);
-        }
-    } else {
-        creationTab(n, T1);
-        *score = 0;
-        add_case(n, T1, score);
-        add_case(n, T1, score);  // Ajoute deux cases au début
-    }
-    
-    affiche(n, T1, score);
-    
-    // Boucle principale du jeu
-    while (jouer) {
-        printf("\nDirections: [Z]Haut [S]Bas [D]Droite [Q]Gauche [A]Quitter\nVotre choix: ");
-        scanf(" %c", &dir);
-        while(getchar() != '\n');
-        dir = tolower(dir);
-        
-        if (dir == 'a') {
-            jouer = 0;
-            Sauvegarde(n, T1, *score, 1);
-        } else if (strchr("zsdq", dir) != NULL) {
-            int moved = move(n, T1, dir);
-            int fused = fusion(n, T1, dir);
-            
-            if (fused) {
-                moved = move(n, T1, dir) || moved;
-            }
-            
-            if (moved || fused) {
-                add_case(n, T1, score);
-            }
-            
-            affiche(n, T1, score);
-        }
+        SDL_Delay(10);
     }
 }
 
@@ -215,7 +258,8 @@ void puzzle(int *score) {
             }
         }
         fclose(f);
-    } else {
+    } 
+    else {
         // Générer un nouveau puzzle
         do {
             printf("Entrez la taille du puzzle (entre 4 et 9) : ");
@@ -249,26 +293,35 @@ void puzzle(int *score) {
     char dir;
     int jouer = 1;
     *score = 0;
+    SDL_Event event;
     
     while (jouer) {
-        affiche(n, T1, score);
-        
-        printf("\nDirections: [Z]Haut [S]Bas [D]Droite [Q]Gauche [A]Quitter\nVotre choix: ");
-        scanf(" %c", &dir);
-        dir = tolower(dir);
-        
-        if (dir == 'a') {
-            jouer = 0;
-        } else if (strchr("zsdq", dir) != NULL) {
-            int moved = move(n, T1, dir);
-            int fused = fusion(n, T1, dir);
-            if (fused) {
-                moved = move(n, T1, dir) || moved;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                jouer = 0;
+                break;
             }
-            if (moved || fused) {
-                add_case(n, T1, score);
+            
+            dir = handle_input(event);
+            if (dir != '\0') {
+                if (dir == 'a') {
+                    jouer = 0;
+                } 
+                else{
+                    int moved = move(n, T1, dir);
+                    int fused = fusion(n, T1, dir);
+                    if (fused) {
+                        moved = move(n, T1, dir) || moved;
+                    }
+                    if (moved || fused) {
+                        add_case(n, T1, score);
+                    }
+                    affiche(n, T1, score);
+                }
             }
         }
+
+        SDL_Delay(10);
     }
 }
 

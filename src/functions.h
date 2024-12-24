@@ -8,13 +8,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
-// Opérations sur la grille (game_logic.c)
 
 // Constantes pour les noms de fichiers
 #define SAVES_DIR "saves"
 #define MAX_PATH 256
 
+// Opérations sur la grille (game_logic.c)
 void creationTab(int n, int T[n][n]);
 void add_case(int length, int Tab[length][length], int *score);
 int move(int n, int T[n][n], char sens);
@@ -22,8 +24,13 @@ int fusion(int n, int Tab[n][n], char sensRotation);
 int compare(int value1, int value2);
 
 // Affichage (display.c)
-void affiche(int n, int T[n][n], int* Score);
-void affiche_duo(int n, int T1[n][n], int T2[n][n], int* score);
+int initSDL(int n);
+void cleanupSDL();
+SDL_Color getColorForValue(int value);
+void createAnimation(int startX, int startY, int endX, int endY, int value);
+void updateAnimations();
+void affiche(int n, int T[n][n], int *Score);
+void affiche_duo(int n, int T1[n][n], int T2[n][n], int *score);
 
 // Sauvegarde et chargement (save_load.c)
 void Sauvegarde(int n, int T[n][n], int score, int mode);

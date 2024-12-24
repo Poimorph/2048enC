@@ -6,7 +6,7 @@ int compare(int value1, int value2) {
 }
 
 void add_case(int length, int Tab[length][length], int *score) {
-    // Count empty cells
+    // Compter les cellules vides
     int empty_count = 0;
     for (int i = 0; i < length; i++) {
         for (int j = 0; j < length; j++) {
@@ -18,7 +18,7 @@ void add_case(int length, int Tab[length][length], int *score) {
     
     if (empty_count == 0) return;
     
-    // Choose random empty cell
+    // Choisir une cellule vide aléatoire
     int target = rand() % empty_count;
     int current = 0;
     
@@ -26,7 +26,7 @@ void add_case(int length, int Tab[length][length], int *score) {
         for (int j = 0; j < length; j++) {
             if (Tab[i][j] == 0) {
                 if (current == target) {
-                    Tab[i][j] = (rand() % 2 + 1) * 2;  // 2 or 4
+                    Tab[i][j] = (rand() % 2 + 1) * 2;  // 2 ou 4
                     *score += Tab[i][j];
                     return;
                 }

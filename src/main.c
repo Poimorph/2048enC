@@ -15,15 +15,22 @@ int main(){
         }
     }
     if(mode!=3){// Si le mode de jeu n'est pas le puzzle alors on lui demande la taille du tableaux.
-        while (n<4||n>9) {
-            printf("Veuillez choisir la taille du tableau (entre 4 et 9) :");
-            scanf("%d", &n);
-            if (n < 4 || n > 9) {
-                printf("Saisie incorrect, Veuillez resaisir ! \n");
+            while (n<4||n>9) {
+                printf("Veuillez choisir la taille du tableau (entre 4 et 9) :");
+                scanf("%d", &n);
+                if (n < 4 || n > 9) {
+                    printf("Saisie incorrect, Veuillez resaisir ! \n");
+                }
             }
         }
+
+        // initialisation de SDL
+        if (!initSDL(n)) {
+            printf("Échec de l'initialisation de SDL. Sortie...\n");
+            return 1;
+        }
+        fflush(stdin);
+        jeu(n,mode);
+        cleanupSDL();
     }
-    fflush(stdin);
-    jeu(n,mode);
-}
 
