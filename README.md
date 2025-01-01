@@ -110,7 +110,7 @@ make mrpropre
 
 ## Auteurs
 Ce projet a été réalisé par :
-- Matteo Di Giorgio (matteo.di_giorgio@utbm.fr)
+- Matteo Di Giorgio(matteo.di-giorgio@utbm.fr)
 - Alexis Chassery (alexis.chassery@utbm.fr) 
 - Suhayb Saleh (suhayb.saleh@utbm.fr)
 
