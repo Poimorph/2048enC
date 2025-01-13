@@ -25,7 +25,6 @@ char handle_input(SDL_Event event) {
     return '\0';
 }
 
-
 /**
  * Fonction principale du mode normal du jeu 2048enC.
  * Permet à un joueur de jouer en mode normal avec la possibilité de sauvegarder et reprendre la partie.
@@ -38,23 +37,23 @@ void normal(int n, int T1[n][n], int* score) {
     char dir;
     char rep = 'n';
     SDL_Event event;
-    
+
     // IMPORTANT : Vérifie d'abord s'il existe une sauvegarde
     if (has_save(1, n)) {
         printf("Une partie sauvegardée existe pour ce mode et cette taille.\n");
         printf("Voulez-vous la continuer ? (O/N) ");
-        
+
         do {
             scanf(" %c", &rep);
             rep = tolower(rep);
-            while(getchar() != '\n');  // Vide le buffer
-            
+            while (getchar() != '\n'); // Vide le buffer
+
             if (rep != 'o' && rep != 'n') {
                 printf("Veuillez répondre par O (oui) ou N (non) : ");
             }
         } while (rep != 'o' && rep != 'n');
     }
-    
+
     // Initialisation en fonction de la réponse
     if (rep == 'o') {
         if (!Lecture(n, T1, score, 1)) {
@@ -67,48 +66,46 @@ void normal(int n, int T1[n][n], int* score) {
         creationTab(n, T1);
         *score = 0;
         add_case(n, T1, score);
-        add_case(n, T1, score);  // Ajoute deux cases au début
+        add_case(n, T1, score); // Ajoute deux cases au début
     }
-    
+
     affiche(n, T1, score);
-    
+
     // Boucle principale du jeu
     while (jouer) {
-            while (SDL_PollEvent(&event)) {
-                if (event.type == SDL_QUIT) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                jouer = 0;
+                Sauvegarde(n, T1, *score, 1);
+                break;
+            }
+            dir = handle_input(event);
+            printf("Key pressed: %d\n", event.key.keysym.sym);
+            if (dir != '\0') {
+                if (dir == 'a') {
                     jouer = 0;
                     Sauvegarde(n, T1, *score, 1);
-                    break;
-                }
-                dir = handle_input(event);
-                printf("Key pressed: %d\n", event.key.keysym.sym);
-                if (dir != '\0') {
-                    if (dir == 'a') {
-                        jouer = 0;
-                        Sauvegarde(n, T1, *score, 1);
-                    } 
-                    else {
-                        int moved = move(n, T1, dir);
-                        int fused = fusion(n, T1, dir);
-                        
-                        if (fused) {
-                            moved = move(n, T1, dir) || moved;
-                        }
-                        
-                        if (moved || fused) {
-                            add_case(n, T1, score);
-                        }
-                        
-                        affiche(n, T1, score);
+                } else {
+                    int moved = move(n, T1, dir);
+                    int fused = fusion(n, T1, dir);
+
+                    if (fused) {
+                        moved = move(n, T1, dir) || moved;
                     }
+
+                    if (moved || fused) {
+                        add_case(n, T1, score);
+                    }
+
+                    affiche(n, T1, score);
                 }
+            }
         }
         SDL_Delay(10);
     }
 }
 
-
-void duo(int n, int T1[n][n], int T2[n][n], int *score){
+void duo(int n, int T1[n][n], int T2[n][n], int* score) {
     /* Fonction principale du mode duo*/
     int jouer = 1;
     char dir;
@@ -119,12 +116,12 @@ void duo(int n, int T1[n][n], int T2[n][n], int *score){
     if (has_save(2, n)) {
         printf("Une partie en mode duo sauvegardée existe pour cette taille.\n");
         printf("Voulez-vous la continuer ? (O/N) ");
-        
+
         do {
             scanf(" %c", &rep);
             rep = tolower(rep);
-            while(getchar() != '\n');  // Vide le buffer
-            
+            while (getchar() != '\n'); // Vide le buffer
+
             if (rep != 'o' && rep != 'n') {
                 printf("Veuillez répondre par O (oui) ou N (non) : ");
             }
@@ -150,7 +147,6 @@ void duo(int n, int T1[n][n], int T2[n][n], int *score){
         add_case(n, T2, score);
     }
 
-    
     affiche_duo(n, T1, T2, score);
 
     int fusionHappend1, movementHappend1, fusionHappend2, movementHappend2;
@@ -162,17 +158,17 @@ void duo(int n, int T1[n][n], int T2[n][n], int *score){
                 Sauvegarde_duo(n, T1, T2, *score);
                 break;
             }
-            
+
             dir = handle_input(event);
             if (dir != '\0') {
                 if (dir == 'a') {
                     jouer = 0;
-                    Sauvegarde_duo(n, T1, T2, *score);  // Sauvegarde avant de quitter
+                    Sauvegarde_duo(n, T1, T2, *score); // Sauvegarde avant de quitter
                 } else {
                     // Premier tableau
                     fusionHappend1 = fusion(n, T1, dir);
                     movementHappend1 = move(n, T1, dir);
-                    
+
                     if (fusionHappend1) {
                         movementHappend1 = move(n, T1, dir) || movementHappend1;
                     }
@@ -180,7 +176,7 @@ void duo(int n, int T1[n][n], int T2[n][n], int *score){
                     // Deuxième tableau
                     fusionHappend2 = fusion(n, T2, dir);
                     movementHappend2 = move(n, T2, dir);
-                    
+
                     if (fusionHappend2) {
                         movementHappend2 = move(n, T2, dir) || movementHappend2;
                     }
@@ -201,48 +197,33 @@ void duo(int n, int T1[n][n], int T2[n][n], int *score){
     }
 }
 
+void puzzle(int n, int isSave, int* score) {
+    int T1[n][n];
 
-void puzzle(int *score) {
-    char choix;
-    printf("Voulez-vous charger un puzzle existant (C) ou en générer un nouveau (N) ? ");
-    
-    do {
-        scanf(" %c", &choix);
-        choix = tolower(choix);
-        while(getchar() != '\n');
-        
-        if (choix != 'c' && choix != 'n') {
-            printf("Veuillez choisir C (charger) ou N (nouveau) : ");
-        }
-    } while (choix != 'c' && choix != 'n');
-    
-    int n;
-    int T1[9][9];  // Tableau statique de taille maximale
-    
     // Initialiser tout le tableau à 0 avant toute autre opération
     memset(T1, 0, sizeof(T1));
-    
-    if (choix == 'c') {
+
+    if (isSave == 1) {
         // Charger un puzzle existant
         FILE* f = fopen("Puzzle/puzzleOne.txt", "r");
         if (f == NULL) {
             printf("Erreur: Impossible d'ouvrir le fichier puzzle!\n");
             return;
         }
-        
+
         char buffer[256];
         if (fgets(buffer, sizeof(buffer), f) == NULL) {
             printf("Erreur de lecture du fichier puzzle!\n");
             fclose(f);
             return;
         }
-        
+
         if (sscanf(buffer, "%*s %d", &n) != 1) {
             printf("Erreur: Format de fichier incorrect!\n");
             fclose(f);
             return;
         }
-        
+
         // Lire le puzzle depuis le fichier
         for (int i = 0; i < n; i++) {
             if (fgets(buffer, sizeof(buffer), f) == NULL) {
@@ -250,7 +231,7 @@ void puzzle(int *score) {
                 fclose(f);
                 return;
             }
-            
+
             char* token = strtok(buffer, "|");
             for (int j = 0; j < n && token != NULL; j++) {
                 T1[i][j] = (strcmp(token, "X") == 0) ? -1 : atoi(token);
@@ -258,56 +239,43 @@ void puzzle(int *score) {
             }
         }
         fclose(f);
-    } 
-    else {
-        // Générer un nouveau puzzle
-        do {
-            printf("Entrez la taille du puzzle (entre 4 et 9) : ");
-            scanf("%d", &n);
-            while(getchar() != '\n');
-            
-            if (n < 4 || n > 9) {
-                printf("La taille doit être entre 4 et 9.\n");
-            }
-        } while (n < 4 || n > 9);
-        
-        // Le tableau est déjà initialisé à 0 grâce au memset
-        
+    } else {
         // Ajouter quelques obstacles (X) aléatoirement
-        int nbObstacles = n * n / 6;  // Environ 1/6 des cases seront des obstacles
+        int nbObstacles = n * n / 6; // Environ 1/6 des cases seront des obstacles
         for (int i = 0; i < nbObstacles; i++) {
             int x, y;
             do {
                 x = rand() % n;
                 y = rand() % n;
             } while (T1[x][y] != 0);
-            T1[x][y] = -1;  // -1 représente un X
+            T1[x][y] = -1; // -1 représente un X
         }
-        
+
         // Ajouter quelques nombres initiaux (uniquement 2 ou 4)
         for (int i = 0; i < 2; i++) {
-            add_case(n,T1,score);
+            add_case(n, T1, score);
         }
     }
-    
+
+    affiche(n, T1, score);
+
     char dir;
     int jouer = 1;
     *score = 0;
     SDL_Event event;
-    
+
     while (jouer) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 jouer = 0;
                 break;
             }
-            
+
             dir = handle_input(event);
             if (dir != '\0') {
                 if (dir == 'a') {
                     jouer = 0;
-                } 
-                else{
+                } else {
                     int moved = move(n, T1, dir);
                     int fused = fusion(n, T1, dir);
                     if (fused) {
@@ -325,16 +293,13 @@ void puzzle(int *score) {
     }
 }
 
-
-
-
 void jeu(int n, int mode) {
     int score = 0;
     int T1[n][n], T2[n][n];
 
-    ensure_saves_directory();  // S'assure que le dossier saves existe
+    ensure_saves_directory(); // S'assure que le dossier saves existe
 
-    switch(mode) {
+    switch (mode) {
         case 1:
             normal(n, T1, &score);
             break;
@@ -342,10 +307,14 @@ void jeu(int n, int mode) {
             duo(n, T1, T2, &score);
             break;
         case 3:
-            puzzle(&score);
+            // Jouer au puzzle deja existant
+            puzzle(n, 1, &score);
+            break;
+        case 4:
+            // Générer un puzzle aléatoire
+            puzzle(n, 0, &score);
             break;
         default:
             printf("Mode de jeu invalide\n");
     }
 }
-
