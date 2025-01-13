@@ -32,30 +32,13 @@ char handle_input(SDL_Event event) {
  * @param T1 Tableau de jeu principal
  * @param score Pointeur vers la variable de score
  */
-void normal(int n, int T1[n][n], int* score) {
+void normal(int n, int T1[n][n], int* score, int isSave) {
     int jouer = 1;
     char dir;
-    char rep = 'n';
     SDL_Event event;
 
-    // IMPORTANT : Vérifie d'abord s'il existe une sauvegarde
-    if (has_save(1, n)) {
-        printf("Une partie sauvegardée existe pour ce mode et cette taille.\n");
-        printf("Voulez-vous la continuer ? (O/N) ");
-
-        do {
-            scanf(" %c", &rep);
-            rep = tolower(rep);
-            while (getchar() != '\n'); // Vide le buffer
-
-            if (rep != 'o' && rep != 'n') {
-                printf("Veuillez répondre par O (oui) ou N (non) : ");
-            }
-        } while (rep != 'o' && rep != 'n');
-    }
-
     // Initialisation en fonction de la réponse
-    if (rep == 'o') {
+    if (isSave) {
         if (!Lecture(n, T1, score, 1)) {
             printf("Erreur de chargement. Démarrage d'une nouvelle partie.\n");
             creationTab(n, T1);
@@ -71,20 +54,38 @@ void normal(int n, int T1[n][n], int* score) {
 
     affiche(n, T1, score);
 
+    int gameOverDisplayed = 0;
+
     // Boucle principale du jeu
     while (jouer) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 jouer = 0;
-                Sauvegarde(n, T1, *score, 1);
+                if (gameOverDisplayed == 0) {
+                    Sauvegarde(n, T1, *score, 1);
+                } else {
+                    if (isSave) {
+                        char filename[MAX_PATH];
+                        get_save_filename(filename, 1, n);
+                        remove(filename);
+                    }
+                }
+
                 break;
             }
             dir = handle_input(event);
-            printf("Key pressed: %d\n", event.key.keysym.sym);
             if (dir != '\0') {
                 if (dir == 'a') {
                     jouer = 0;
-                    Sauvegarde(n, T1, *score, 1);
+                    if (gameOverDisplayed == 0) {
+                        Sauvegarde(n, T1, *score, 1);
+                    } else {
+                        if (isSave) {
+                            char filename[MAX_PATH];
+                            get_save_filename(filename, 1, n);
+                            remove(filename);
+                        }
+                    }
                 } else {
                     int moved = move(n, T1, dir);
                     int fused = fusion(n, T1, dir);
@@ -98,6 +99,12 @@ void normal(int n, int T1[n][n], int* score) {
                     }
 
                     affiche(n, T1, score);
+
+                    // Vérifier si le jeu est terminé
+                    if (isGameOver(n, T1)) {
+                        gameOverDisplayed = 1;
+                        displayGameOver(*score);
+                    }
                 }
             }
         }
@@ -105,31 +112,14 @@ void normal(int n, int T1[n][n], int* score) {
     }
 }
 
-void duo(int n, int T1[n][n], int T2[n][n], int* score) {
+void duo(int n, int T1[n][n], int T2[n][n], int* score, int isSave) {
     /* Fonction principale du mode duo*/
     int jouer = 1;
     char dir;
-    char rep = 'n';
     SDL_Event event;
 
-    // Vérifie s'il existe une sauvegarde pour le mode duo
-    if (has_save(2, n)) {
-        printf("Une partie en mode duo sauvegardée existe pour cette taille.\n");
-        printf("Voulez-vous la continuer ? (O/N) ");
-
-        do {
-            scanf(" %c", &rep);
-            rep = tolower(rep);
-            while (getchar() != '\n'); // Vide le buffer
-
-            if (rep != 'o' && rep != 'n') {
-                printf("Veuillez répondre par O (oui) ou N (non) : ");
-            }
-        } while (rep != 'o' && rep != 'n');
-    }
-
     // Initialisation en fonction de la réponse
-    if (rep == 'o') {
+    if (isSave) {
         if (!Lecture_duo(n, T1, T2, score)) {
             printf("Erreur de chargement. Démarrage d'une nouvelle partie.\n");
             creationTab(n, T1);
@@ -149,13 +139,21 @@ void duo(int n, int T1[n][n], int T2[n][n], int* score) {
 
     affiche_duo(n, T1, T2, score);
 
-    int fusionHappend1, movementHappend1, fusionHappend2, movementHappend2;
+    int fusionHappend1, movementHappend1, fusionHappend2, movementHappend2, gameOverDisplayed = 0;
 
     while (jouer) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 jouer = 0;
-                Sauvegarde_duo(n, T1, T2, *score);
+                if (gameOverDisplayed == 0) {
+                    Sauvegarde_duo(n, T1, T2, *score);
+                } else {
+                    if (isSave) {
+                        char filename[MAX_PATH];
+                        get_save_filename(filename, 2, n);
+                        remove(filename);
+                    }
+                }
                 break;
             }
 
@@ -163,7 +161,15 @@ void duo(int n, int T1[n][n], int T2[n][n], int* score) {
             if (dir != '\0') {
                 if (dir == 'a') {
                     jouer = 0;
-                    Sauvegarde_duo(n, T1, T2, *score); // Sauvegarde avant de quitter
+                    if (gameOverDisplayed == 0) {
+                        Sauvegarde_duo(n, T1, T2, *score);
+                    } else {
+                        if (isSave) {
+                            char filename[MAX_PATH];
+                            get_save_filename(filename, 2, n);
+                            remove(filename);
+                        }
+                    }
                 } else {
                     // Premier tableau
                     fusionHappend1 = fusion(n, T1, dir);
@@ -190,6 +196,12 @@ void duo(int n, int T1[n][n], int T2[n][n], int* score) {
                     }
 
                     affiche_duo(n, T1, T2, score);
+
+                    // Vérifier si le jeu est terminé
+                    if (isGameOver(n, T1) && isGameOver(n, T2)) {
+                        gameOverDisplayed = 1;
+                        displayGameOver(*score);
+                    }
                 }
             }
         }
@@ -198,10 +210,14 @@ void duo(int n, int T1[n][n], int T2[n][n], int* score) {
 }
 
 void puzzle(int n, int isSave, int* score) {
-    int T1[n][n];
+    int T1[n][n]; // Allocation dynamique
 
     // Initialiser tout le tableau à 0 avant toute autre opération
-    memset(T1, 0, sizeof(T1));
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            T1[i][j] = 0;
+        }
+    }
 
     if (isSave == 1) {
         // Charger un puzzle existant
@@ -212,17 +228,6 @@ void puzzle(int n, int isSave, int* score) {
         }
 
         char buffer[256];
-        if (fgets(buffer, sizeof(buffer), f) == NULL) {
-            printf("Erreur de lecture du fichier puzzle!\n");
-            fclose(f);
-            return;
-        }
-
-        if (sscanf(buffer, "%*s %d", &n) != 1) {
-            printf("Erreur: Format de fichier incorrect!\n");
-            fclose(f);
-            return;
-        }
 
         // Lire le puzzle depuis le fichier
         for (int i = 0; i < n; i++) {
@@ -285,6 +290,11 @@ void puzzle(int n, int isSave, int* score) {
                         add_case(n, T1, score);
                     }
                     affiche(n, T1, score);
+
+                    // Vérifier si le jeu est terminé
+                    if (isGameOver(n, T1)) {
+                        displayGameOver(*score);
+                    }
                 }
             }
         }
@@ -293,7 +303,7 @@ void puzzle(int n, int isSave, int* score) {
     }
 }
 
-void jeu(int n, int mode) {
+void jeu(int n, int mode, int charger) {
     int score = 0;
     int T1[n][n], T2[n][n];
 
@@ -301,18 +311,13 @@ void jeu(int n, int mode) {
 
     switch (mode) {
         case 1:
-            normal(n, T1, &score);
+            normal(n, T1, &score, charger);
             break;
         case 2:
-            duo(n, T1, T2, &score);
+            duo(n, T1, T2, &score, charger);
             break;
         case 3:
-            // Jouer au puzzle deja existant
-            puzzle(n, 1, &score);
-            break;
-        case 4:
-            // Générer un puzzle aléatoire
-            puzzle(n, 0, &score);
+            puzzle(n, charger, &score);
             break;
         default:
             printf("Mode de jeu invalide\n");
