@@ -11,7 +11,7 @@ Ce projet a été réalisé dans le cadre de l'UE IF2 (Algorithmique et Programm
 
 ### 1. Mode Classique
 - Jeu traditionnel 2048 sur une grille unique
-- Interface graphique avec animations fluides
+- Interface graphique
 - Sauvegarde et reprise automatique de la partie
 - Taille de grille personnalisable (4x4 à 9x9)
 
@@ -81,7 +81,7 @@ make
 - `src/main.c` : Point d'entrée du programme et gestion de la fenêtre SDL
 - `src/game_logic.c` : Logique de base du jeu (déplacements, fusions...)
 - `src/game_mode.c` : Implémentation des différents modes de jeu
-- `src/display.c` : Gestion de l'affichage SDL et des animations
+- `src/display.c` : Gestion de l'affichage SDL
 - `src/save_load.c` : Système de sauvegarde et chargement
 - `src/functions.h` : Déclarations des fonctions et structures
 
@@ -93,7 +93,7 @@ make
 ## Fonctionnalités Techniques
 
 ### Interface Graphique
-- Rendu SDL2 avec animations fluides
+- Rendu SDL2
 - Couleurs distinctes pour chaque valeur de tuile
 - Affichage du score en temps réel
 - Menu de sélection de mode et de taille
