@@ -14,10 +14,9 @@ SDL_Color COLORS[] = {
     {255, 229, 240, 255},
     {240, 255, 229, 255}};
 
-SDL_Window* window = NULL;
-SDL_Renderer* renderer = NULL;
-TTF_Font* font = NULL;
-Animation animations[81][81]; // taille maximm pour les grilles 9x9
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
+TTF_Font *font = NULL;
 
 void displayGameOver(int score) {
     // Obtenir les dimensions réelles de la fenêtre
@@ -31,8 +30,8 @@ void displayGameOver(int score) {
     SDL_RenderFillRect(renderer, &overlay);
 
     // Augmenter la taille de la police pour le "Game Over"
-    TTF_Font* gameOverFont = TTF_OpenFont("resources/font.ttf", 48);
-    TTF_Font* normalFont = TTF_OpenFont("resources/font.ttf", 24);
+    TTF_Font *gameOverFont = TTF_OpenFont("resources/font.ttf", 48);
+    TTF_Font *normalFont = TTF_OpenFont("resources/font.ttf", 24);
 
     if (!gameOverFont || !normalFont) {
         printf("Erreur de chargement des polices: %s\n", TTF_GetError());
@@ -42,8 +41,8 @@ void displayGameOver(int score) {
     SDL_Color textColor = {255, 255, 255, 255};
 
     // Texte "Game Over" avec la grande police
-    SDL_Surface* gameOverSurface = TTF_RenderText_Solid(gameOverFont, "Game Over!", textColor);
-    SDL_Texture* gameOverTexture = SDL_CreateTextureFromSurface(renderer, gameOverSurface);
+    SDL_Surface *gameOverSurface = TTF_RenderText_Solid(gameOverFont, "Game Over!", textColor);
+    SDL_Texture *gameOverTexture = SDL_CreateTextureFromSurface(renderer, gameOverSurface);
 
     SDL_Rect gameOverRect = {
         (windowWidth - gameOverSurface->w) / 2,
@@ -54,8 +53,8 @@ void displayGameOver(int score) {
     // Score avec la police normale
     char scoreText[32];
     sprintf(scoreText, "Score Final: %d", score);
-    SDL_Surface* scoreSurface = TTF_RenderText_Solid(normalFont, scoreText, textColor);
-    SDL_Texture* scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+    SDL_Surface *scoreSurface = TTF_RenderText_Solid(normalFont, scoreText, textColor);
+    SDL_Texture *scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
 
     SDL_Rect scoreRect = {
         (windowWidth - scoreSurface->w) / 2,
@@ -64,8 +63,8 @@ void displayGameOver(int score) {
         scoreSurface->h};
 
     // Message pour quitter avec la police normale
-    SDL_Surface* quitSurface = TTF_RenderText_Solid(normalFont, "Appuyez sur 'A' pour quitter", textColor);
-    SDL_Texture* quitTexture = SDL_CreateTextureFromSurface(renderer, quitSurface);
+    SDL_Surface *quitSurface = TTF_RenderText_Solid(normalFont, "Appuyez sur 'A' pour quitter", textColor);
+    SDL_Texture *quitTexture = SDL_CreateTextureFromSurface(renderer, quitSurface);
 
     SDL_Rect quitRect = {
         (windowWidth - quitSurface->w) / 2,
@@ -91,14 +90,14 @@ void displayGameOver(int score) {
     TTF_CloseFont(normalFont);
 }
 
-void draw_choice_buttons(const char* title, const char* button1_text, const char* button2_text, int selected_button) {
+void draw_choice_buttons(const char *title, const char *button1_text, const char *button2_text) {
     SDL_SetRenderDrawColor(renderer, 240, 240, 240, 255);
     SDL_RenderClear(renderer);
 
     // Afficher le titre
     SDL_Color textColor = {70, 70, 70, 255};
-    SDL_Surface* titleSurface = TTF_RenderText_Solid(font, title, textColor);
-    SDL_Texture* titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
+    SDL_Surface *titleSurface = TTF_RenderText_Solid(font, title, textColor);
+    SDL_Texture *titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
 
     SDL_Rect titleRect = {
         (800 - titleSurface->w) / 2,
@@ -112,24 +111,22 @@ void draw_choice_buttons(const char* title, const char* button1_text, const char
 
     // Créer les deux boutons
     Button buttons[] = {
-        {{(800 - BUTTON_WIDTH) / 2, 250, BUTTON_WIDTH, BUTTON_HEIGHT}, (char*)button1_text, 1},
-        {{(800 - BUTTON_WIDTH) / 2, 350, BUTTON_WIDTH, BUTTON_HEIGHT}, (char*)button2_text, 2}};
+        {{(800 - BUTTON_WIDTH) / 2, 250, BUTTON_WIDTH, BUTTON_HEIGHT}, (char *)button1_text, 1},
+        {{(800 - BUTTON_WIDTH) / 2, 350, BUTTON_WIDTH, BUTTON_HEIGHT}, (char *)button2_text, 2}};
 
     // Dessiner les boutons
     for (int i = 0; i < 2; i++) {
-        draw_button(renderer, buttons[i], font, i == selected_button);
+        draw_button(renderer, buttons[i], font);
     }
 
     SDL_RenderPresent(renderer);
 }
 
-void draw_button(SDL_Renderer* renderer, Button button, TTF_Font* font, int is_selected) {
+void draw_button(SDL_Renderer *renderer, Button button, TTF_Font *font) {
     // Couleur de fond du bouton
-    if (is_selected) {
-        SDL_SetRenderDrawColor(renderer, 150, 150, 255, 255);
-    } else {
-        SDL_SetRenderDrawColor(renderer, 200, 200, 255, 255);
-    }
+
+    SDL_SetRenderDrawColor(renderer, 200, 200, 255, 255);
+
     SDL_RenderFillRect(renderer, &button.rect);
 
     // Bordure du bouton
@@ -138,8 +135,8 @@ void draw_button(SDL_Renderer* renderer, Button button, TTF_Font* font, int is_s
 
     // Texte du bouton
     SDL_Color textColor = {70, 70, 70, 255};
-    SDL_Surface* textSurface = TTF_RenderText_Solid(font, button.text, textColor);
-    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    SDL_Surface *textSurface = TTF_RenderText_Solid(font, button.text, textColor);
+    SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
     SDL_Rect textRect = {
         button.rect.x + (button.rect.w - textSurface->w) / 2,
@@ -153,7 +150,6 @@ void draw_button(SDL_Renderer* renderer, Button button, TTF_Font* font, int is_s
 }
 
 int show_load_new_choice(int mode, int size) {
-    int selected_button = 0;
     SDL_Event event;
     int running = 1;
     int has_saved_game = has_save(mode, size);
@@ -163,9 +159,9 @@ int show_load_new_choice(int mode, int size) {
         return 0; // 0 pour nouvelle partie
     }
 
-    const char* title;
-    const char* button1_text;
-    const char* button2_text;
+    const char *title;
+    const char *button1_text;
+    const char *button2_text;
 
     if (mode == 3) {
         title = "Choisissez votre option:";
@@ -203,14 +199,14 @@ int show_load_new_choice(int mode, int size) {
             }
         }
 
-        draw_choice_buttons(title, button1_text, button2_text, selected_button);
+        draw_choice_buttons(title, button1_text, button2_text);
         SDL_Delay(10);
     }
 
     return -1;
 }
 
-void show_size_selector(SDL_Renderer* renderer, TTF_Font* font, int* selected_size) {
+void show_size_selector(SDL_Renderer *renderer, TTF_Font *font) {
     int buttonSpacing = 20;
     int buttonWidth = 50;
     int buttonHeight = 50;
@@ -223,8 +219,8 @@ void show_size_selector(SDL_Renderer* renderer, TTF_Font* font, int* selected_si
 
     // Afficher le texte "Choisissez la taille de la grille :"
     SDL_Color textColor = {70, 70, 70, 255};
-    SDL_Surface* titleSurface = TTF_RenderText_Solid(font, "Choisissez la taille de la grille:", textColor);
-    SDL_Texture* titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
+    SDL_Surface *titleSurface = TTF_RenderText_Solid(font, "Choisissez la taille de la grille:", textColor);
+    SDL_Texture *titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
 
     SDL_Rect titleRect = {
         (800 - titleSurface->w) / 2,
@@ -244,17 +240,13 @@ void show_size_selector(SDL_Renderer* renderer, TTF_Font* font, int* selected_si
             buttonWidth,
             buttonHeight};
 
-        if (i == *selected_size) {
-            SDL_SetRenderDrawColor(renderer, 150, 150, 255, 255);
-        } else {
-            SDL_SetRenderDrawColor(renderer, 200, 200, 255, 255);
-        }
+        SDL_SetRenderDrawColor(renderer, 200, 200, 255, 255);
         SDL_RenderFillRect(renderer, &buttonRect);
 
         char sizeText[3];
         sprintf(sizeText, "%d", i);
-        SDL_Surface* numSurface = TTF_RenderText_Solid(font, sizeText, textColor);
-        SDL_Texture* numTexture = SDL_CreateTextureFromSurface(renderer, numSurface);
+        SDL_Surface *numSurface = TTF_RenderText_Solid(font, sizeText, textColor);
+        SDL_Texture *numTexture = SDL_CreateTextureFromSurface(renderer, numSurface);
 
         SDL_Rect numRect = {
             buttonRect.x + (buttonWidth - numSurface->w) / 2,
@@ -270,7 +262,7 @@ void show_size_selector(SDL_Renderer* renderer, TTF_Font* font, int* selected_si
     SDL_RenderPresent(renderer);
 }
 
-int menu_demarrage(int* n, int* mode) {
+int menu_demarrage(int *n, int *mode) {
     int window_width = 800;
     int window_height = 600;
     SDL_SetWindowSize(window, window_width, window_height);
@@ -280,8 +272,6 @@ int menu_demarrage(int* n, int* mode) {
         {{(window_width - BUTTON_WIDTH) / 2, 250, BUTTON_WIDTH, BUTTON_HEIGHT}, "Mode Duo", 2},
         {{(window_width - BUTTON_WIDTH) / 2, 350, BUTTON_WIDTH, BUTTON_HEIGHT}, "Mode Puzzle", 3}};
 
-    int selected_button = 0;
-    int selected_size = 4;
     int size_selection = 0;
     SDL_Event event;
     int running = 1;
@@ -303,16 +293,16 @@ int menu_demarrage(int* n, int* mode) {
                             mouseX <= buttons[i].rect.x + buttons[i].rect.w &&
                             mouseY >= buttons[i].rect.y &&
                             mouseY <= buttons[i].rect.y + buttons[i].rect.h) {
-                            selected_button = i;
                             *mode = buttons[i].mode;
                             if (*mode != 3) {
                                 size_selection = 1; // Passer à la sélection de taille
                             } else {
                                 // Pour le mode puzzle, aller directement au choix charger/générer
                                 int choice = show_load_new_choice(*mode, 4);
-                                if (choice == -1) return 0; // Quitter
-                                *n = 5;                     // Taille par défaut pour le puzzle
-                                return choice + 1;          // Retourner 2 pour charger, 1 pour nouveau
+                                if (choice == -1)
+                                    return 0;      // Quitter
+                                *n = 5;            // Taille par défaut pour le puzzle
+                                return choice + 1; // Retourner 2 pour charger, 1 pour nouveau
                             }
                             break;
                         }
@@ -336,12 +326,12 @@ int menu_demarrage(int* n, int* mode) {
                             mouseX <= sizeRect.x + sizeRect.w &&
                             mouseY >= sizeRect.y &&
                             mouseY <= sizeRect.y + sizeRect.h) {
-                            selected_size = i;
                             *n = i;
                             // Montrer l'écran de choix charger/nouvelle partie
                             int choice = show_load_new_choice(*mode, *n);
-                            if (choice == -1) return 0; // Quitter
-                            return choice + 1;          // Retourner 2 pour charger, 1 pour nouveau
+                            if (choice == -1)
+                                return 0;      // Quitter
+                            return choice + 1; // Retourner 2 pour charger, 1 pour nouveau
                         }
                     }
                 }
@@ -355,8 +345,8 @@ int menu_demarrage(int* n, int* mode) {
         if (!size_selection) {
             // Afficher le titre
             SDL_Color textColor = {70, 70, 70, 255};
-            SDL_Surface* titleSurface = TTF_RenderText_Solid(font, "2048 - Choisissez votre mode de jeu", textColor);
-            SDL_Texture* titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
+            SDL_Surface *titleSurface = TTF_RenderText_Solid(font, "2048 - Choisissez votre mode de jeu", textColor);
+            SDL_Texture *titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
 
             SDL_Rect titleRect = {
                 (window_width - titleSurface->w) / 2,
@@ -370,10 +360,10 @@ int menu_demarrage(int* n, int* mode) {
 
             // Afficher les boutons de mode
             for (int i = 0; i < 3; i++) {
-                draw_button(renderer, buttons[i], font, i == selected_button);
+                draw_button(renderer, buttons[i], font);
             }
         } else {
-            show_size_selector(renderer, font, &selected_size);
+            show_size_selector(renderer, font);
         }
 
         SDL_RenderPresent(renderer);
@@ -438,56 +428,12 @@ SDL_Color getColorForValue(int value) {
     return COLORS[index];
 }
 
-// Créer une animation pour le mouvement d'une tuile
-void createAnimation(int startX, int startY, int endX, int endY, int value) {
-    animations[startX][startY].startX = startX * (CELL_SIZE + CELL_PADDING) + CELL_PADDING;
-    animations[startX][startY].startY = startY * (CELL_SIZE + CELL_PADDING) + CELL_PADDING;
-    animations[startX][startY].endX = endX * (CELL_SIZE + CELL_PADDING) + CELL_PADDING;
-    animations[startX][startY].endY = endY * (CELL_SIZE + CELL_PADDING) + CELL_PADDING;
-    animations[startX][startY].currentX = animations[startX][startY].startX;
-    animations[startX][startY].currentY = animations[startX][startY].startY;
-    animations[startX][startY].value = value;
-    animations[startX][startY].progress = 0;
-    animations[startX][startY].active = 1;
-}
-
-// Mettre à jour et afficher les animations
-void updateAnimations() {
-    for (int i = 0; i < 81; i++) {
-        for (int j = 0; j < 81; j++) {
-            if (animations[i][j].active) {
-                animations[i][j].progress += ANIMATION_SPEED;
-
-                if (animations[i][j].progress >= 1.0) {
-                    animations[i][j].active = 0;
-                } else {
-                    animations[i][j].currentX = animations[i][j].startX +
-                                                (animations[i][j].endX - animations[i][j].startX) * animations[i][j].progress;
-                    animations[i][j].currentY = animations[i][j].startY +
-                                                (animations[i][j].endY - animations[i][j].startY) * animations[i][j].progress;
-
-                    // Afficher la tuile animée
-                    SDL_Rect tileRect = {
-                        animations[i][j].currentX,
-                        animations[i][j].currentY,
-                        CELL_SIZE,
-                        CELL_SIZE};
-
-                    SDL_Color color = getColorForValue(animations[i][j].value);
-                    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-                    SDL_RenderFillRect(renderer, &tileRect);
-                }
-            }
-        }
-    }
-}
-
 /** Affiche le terrain de jeu du 2048enC dans la console.
  * @param n      : La taille du tableau (assumant que c'est un tableau carré nxn).
  * @param T      : Le tableau bidimensionnel représentant le terrain de jeu.
  * @param Score  : Pointeur vers la variable contenant le score actuel.
  */
-void affiche(int n, int T[n][n], int* Score) {
+void affiche(int n, int T[n][n], int *Score) {
     SDL_SetRenderDrawColor(renderer, 240, 240, 240, 255);
     SDL_RenderClear(renderer);
 
@@ -495,8 +441,8 @@ void affiche(int n, int T[n][n], int* Score) {
     char scoreText[32];
     sprintf(scoreText, "Score: %d", *Score);
     SDL_Color textColor = {70, 70, 70, 255};
-    SDL_Surface* scoreSurface = TTF_RenderText_Solid(font, scoreText, textColor);
-    SDL_Texture* scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+    SDL_Surface *scoreSurface = TTF_RenderText_Solid(font, scoreText, textColor);
+    SDL_Texture *scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
     SDL_Rect scoreRect = {10, 10, scoreSurface->w, scoreSurface->h};
     SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreRect);
     SDL_FreeSurface(scoreSurface);
@@ -528,8 +474,8 @@ void affiche(int n, int T[n][n], int* Score) {
                 // Dessiner le numéro
                 char numText[8];
                 sprintf(numText, "%d", T[i][j]);
-                SDL_Surface* numSurface = TTF_RenderText_Solid(font, numText, textColor);
-                SDL_Texture* numTexture = SDL_CreateTextureFromSurface(renderer, numSurface);
+                SDL_Surface *numSurface = TTF_RenderText_Solid(font, numText, textColor);
+                SDL_Texture *numTexture = SDL_CreateTextureFromSurface(renderer, numSurface);
 
                 SDL_Rect numRect = {
                     cellRect.x + (CELL_SIZE - numSurface->w) / 2,
@@ -548,9 +494,6 @@ void affiche(int n, int T[n][n], int* Score) {
         }
     }
 
-    // Mettre à jour et afficher les animations
-    updateAnimations();
-
     SDL_RenderPresent(renderer);
 }
 
@@ -561,7 +504,7 @@ void affiche(int n, int T[n][n], int* Score) {
  * @param T2    : Le deuxième tableau bidimensionnel à afficher.
  * @param score : Pointeur vers la variable contenant le score actuel.
  */
-void affiche_duo(int n, int T1[n][n], int T2[n][n], int* score) {
+void affiche_duo(int n, int T1[n][n], int T2[n][n], int *score) {
     SDL_SetRenderDrawColor(renderer, 240, 240, 240, 255);
     SDL_RenderClear(renderer);
 
@@ -571,8 +514,8 @@ void affiche_duo(int n, int T1[n][n], int T2[n][n], int* score) {
     SDL_Color textColor = {70, 70, 70, 255};
     char scoreText[32];
     sprintf(scoreText, "Score: %d", *score);
-    SDL_Surface* scoreSurface = TTF_RenderText_Solid(font, scoreText, textColor);
-    SDL_Texture* scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+    SDL_Surface *scoreSurface = TTF_RenderText_Solid(font, scoreText, textColor);
+    SDL_Texture *scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
     SDL_Rect scoreRect = {10, 10, scoreSurface->w, scoreSurface->h};
     SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreRect);
     SDL_FreeSurface(scoreSurface);
@@ -597,8 +540,8 @@ void affiche_duo(int n, int T1[n][n], int T2[n][n], int* score) {
 
                 char numText[8];
                 sprintf(numText, "%d", T1[i][j]);
-                SDL_Surface* numSurface = TTF_RenderText_Solid(font, numText, textColor);
-                SDL_Texture* numTexture = SDL_CreateTextureFromSurface(renderer, numSurface);
+                SDL_Surface *numSurface = TTF_RenderText_Solid(font, numText, textColor);
+                SDL_Texture *numTexture = SDL_CreateTextureFromSurface(renderer, numSurface);
 
                 SDL_Rect numRect = {
                     cellRect.x + (CELL_SIZE - numSurface->w) / 2,
@@ -635,8 +578,8 @@ void affiche_duo(int n, int T1[n][n], int T2[n][n], int* score) {
 
                 char numText[8];
                 sprintf(numText, "%d", T2[i][j]);
-                SDL_Surface* numSurface = TTF_RenderText_Solid(font, numText, textColor);
-                SDL_Texture* numTexture = SDL_CreateTextureFromSurface(renderer, numSurface);
+                SDL_Surface *numSurface = TTF_RenderText_Solid(font, numText, textColor);
+                SDL_Texture *numTexture = SDL_CreateTextureFromSurface(renderer, numSurface);
 
                 SDL_Rect numRect = {
                     cellRect.x + (CELL_SIZE - numSurface->w) / 2,
@@ -653,9 +596,6 @@ void affiche_duo(int n, int T1[n][n], int T2[n][n], int* score) {
             }
         }
     }
-
-    // Mettre à jour et rendre les animations pour les deux grilles
-    updateAnimations();
 
     SDL_RenderPresent(renderer);
 }

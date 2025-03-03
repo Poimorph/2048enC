@@ -17,7 +17,6 @@
 // Constants pour les coleurs et dimensions
 #define CELL_SIZE 100
 #define CELL_PADDING 10
-#define ANIMATION_SPEED 0.1
 #define MENU_CELL_SIZE 50
 #define MENU_PADDING 10
 #define BUTTON_HEIGHT 60
@@ -33,17 +32,6 @@ typedef struct {
 } Button;
 
 // Structure pour génrer les animations
-typedef struct {
-    int startX;
-    int startY;
-    int endX;
-    int endY;
-    int currentX;
-    int currentY;
-    int value;
-    float progress;
-    int active;
-} Animation;
 
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
@@ -61,12 +49,10 @@ int isGameOver(int n, int T[n][n]);
 int initSDL(int width, int height);
 void cleanupSDL();
 SDL_Color getColorForValue(int value);
-void createAnimation(int startX, int startY, int endX, int endY, int value);
-void updateAnimations();
 void affiche(int n, int T[n][n], int* Score);
 void affiche_duo(int n, int T1[n][n], int T2[n][n], int* score);
-void draw_button(SDL_Renderer* renderer, Button button, TTF_Font* font, int is_selected);
-void show_size_selector(SDL_Renderer* renderer, TTF_Font* font, int* selected_size);
+void draw_button(SDL_Renderer* renderer, Button button, TTF_Font* font);
+void show_size_selector(SDL_Renderer* renderer, TTF_Font* font);
 int menu_demarrage(int* n, int* mode);
 void displayGameOver(int score);
 
