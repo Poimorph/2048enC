@@ -26,5 +26,4 @@ mrpropre: clean
 
 re: clean all
 
-
 .PHONY: clean mrpropre all
